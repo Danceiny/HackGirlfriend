@@ -6,18 +6,20 @@ sys.setdefaultencoding('utf-8')
 from flask import Flask
 from flask_gzip import Gzip
 from werkzeug.routing import BaseConverter
-
+from flask_socketio import SocketIO
 # from Libraries.DBModel import *
 
 
 from Speak.Speak import Speak
+from QQBot.QQBot import QQBot
 
 def configure_blueprints(app):
-    # app.secret_key = 'jikappj39822@$*hjj'
+    app.secret_key = 'jikappj39822@$*hjj'
 
     # 初始化数据库模型
     # DBModelFactory.instance()
     app.register_blueprint(Speak, url_prefix="/")
+    app.register_blueprint(QQBot, url_prefix="/")
     # app.register_blueprint(Config, url_prefix="/")
     # app.register_blueprint(User, url_prefix="/")
     # app.register_blueprint(News, url_prefix="/")
@@ -42,7 +44,8 @@ def create_app():
     return app
 
 app = create_app()
-
+socketio = SocketIO(app)
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":
-    app.run(port=8099, debug=True, host="0.0.0.0")#host0000可从外网访问
+    # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
+    socketio.run(app, debug=True, host="127.0.0.1")#host0000可从外网访问
