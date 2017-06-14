@@ -31,7 +31,7 @@ from Platform.QQBotCenter.QQBotCenter import QQBotCenter
 # @allow_cross_domain
 # @package_json_request_data
 
-@QQBot.route('qqbot/login',methods = ['POST','GET'],endpoint='loginPage')
+@QQBot.route('qqbot/login',methods = ['GET'],endpoint='loginPage')
 @check_api_cost_time
 def loginPage():
     # get code pic

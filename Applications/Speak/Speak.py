@@ -7,8 +7,7 @@ import trace
 from flask import Blueprint, request, jsonify, redirect, render_template
 import requests
 import urllib
-
-import Libraries.Utils as utils
+from Libraries.Utils import *
 import PackageData.BaiduYuyin as baidu
 
 # 实例化一个blueprint
@@ -39,7 +38,7 @@ def speak_words(words):
     lan = DEFAULT_LAN
     tok = baidu.ACCESS_TOKEN
     ctp = DEFAULT_CTP
-    cuid = utils.get_mac_address()
+    cuid = get_mac_address()
     spd = DEFAULT_SPEED
     per = DEFAULT_PER
     vol = DEFAULT_VOL
