@@ -1,37 +1,17 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
-          <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>d
-    <script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-        var socket = io.connect();
-
-        socket.on('connect', function() {
-            socket.emit('connect_event', {data: 'connected!'});
-        })
-
-        socket.on('server_response', function(msg) {
-            $('#log').append('<br>' + $('<div/>').text('Received #' + ': ' + msg.data).html());
-        });
-
-        $('form#emit').submit(function(event) {
-                socket.emit('client_event', {data: $('#emit_data').val()});
-                return false;
-            });
-    });
-
-    </script>
-    <title>QQ聊天机器人</title>
-    <meta name="description" content="Commentbox">
-  </head>
-  <body>
-  <div id="login">
-      <img src="../img/erweima.login.png"/>
-  </div>
-    <div id="app"></div>
-{#    <script src="${ url_for('static', filename='js/dist/index.bundle.js') }"></script>#}
-  </body>
+    <head>
+        <title>Flask-SocketIO-Chat</title>
+    </head>
+    <body>
+        <h1>Flask-SocketIO-Chat</h1>
+{#        <form method="POST">#}
+{#            {{ form.hidden_tag() }}#}
+{#            {{ form.name.label }}: {{ form.name() }} {% for error in form.name.errors %}{{ error }}{% endfor %}<br>#}
+{#            {{ form.room.label }}: {{ form.room() }} {% for error in form.room.errors %}{{ error }}{% endfor %}<br>#}
+{#            {{ form.submit() }}#}
+{#        </form>#}
+    </body>
 </html>
+
+
+
