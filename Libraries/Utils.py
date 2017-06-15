@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -21,10 +22,11 @@ import random
 import pytz
 import uuid
 
+
 # MAC ADDRESS
 def get_mac_address():
-    mac=uuid.UUID(int = uuid.getnode()).hex[-12:]
-    return ":".join([mac[e:e+2] for e in range(0,11,2)])
+    mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
+    return ":".join([mac[e:e + 2] for e in range(0, 11, 2)])
 
 
 def add_cross_headers(response):
@@ -48,7 +50,8 @@ def allow_cross_domain(method):
 
     return _decorator
 
-def convert_int_2_string_single(int_time,onlydate=False,only_m_d=False):
+
+def convert_int_2_string_single(int_time, onlydate=False, only_m_d=False):
     key_time = time.localtime(int_time)
     if onlydate == True:
         return time.strftime('%Y-%m-%d', key_time)
@@ -57,8 +60,9 @@ def convert_int_2_string_single(int_time,onlydate=False,only_m_d=False):
     else:
         return time.strftime('%Y-%m-%d %H:%M:%S', key_time)
 
+
 # 将int类型时间转成字符串
-def convert_int_2_string(datas, keys, onlydate=False,only_m_d=False):
+def convert_int_2_string(datas, keys, onlydate=False, only_m_d=False):
     if type(datas) == dict:
         datas = [datas]
     if type(datas) != list:
@@ -72,21 +76,23 @@ def convert_int_2_string(datas, keys, onlydate=False,only_m_d=False):
             if data.has_key(key) and type(data[key]) == int:
                 key_time = time.localtime(data[key])
                 if onlydate == True:
-                    data[key] = time.strftime('%Y-%m-%d',key_time)
+                    data[key] = time.strftime('%Y-%m-%d', key_time)
                 elif only_m_d == True:
-                    data[key] = time.strftime('%m-%d',key_time)
+                    data[key] = time.strftime('%m-%d', key_time)
                 else:
-                    data[key] = time.strftime('%Y-%m-%d %H:%M:%S',key_time)
+                    data[key] = time.strftime('%Y-%m-%d %H:%M:%S', key_time)
     return datas
 
-#讲 string 时间转化为int
+
+# 讲 string 时间转化为int
 def convert_string_2_int(timestring):
     # if type(timestring) == str or type(timestring) == unicode:
     #     return 0
     return time.mktime(time.strptime(timestring, '%Y-%m-%d %H:%M:%S'))
 
+
 # 将Datetime类型转成字符串
-def convert_datetime_2_string(datas, keys, onlydate=False,only_m_d=False):
+def convert_datetime_2_string(datas, keys, onlydate=False, only_m_d=False):
     if type(datas) == dict:
         datas = [datas]
     if type(datas) != list:
@@ -107,6 +113,23 @@ def convert_datetime_2_string(datas, keys, onlydate=False,only_m_d=False):
     return datas
 
 
+def utc_to_local(utc_time_str, utc_format='%Y-%m-%dT%H:%M:%S.000Z'):
+    local_tz = pytz.timezone('Asia/Chongqing')
+    local_format = "%Y-%m-%d %H:%M"
+    utc_dt = datetime.datetime.strptime(utc_time_str, utc_format)
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    time_str = local_dt.strftime(local_format)
+    return int(time.mktime(time.strptime(time_str, local_format)))
+
+
+def get_now_time_int():
+    return int(time.time())
+
+
+def get_now_time_str_ms():
+    return ("%.3f" % (time.time())).decode('utf-8')
+
+
 # api调用耗时
 def check_api_cost_time(method):
     @wraps(method)
@@ -124,6 +147,7 @@ def check_api_cost_time(method):
             return {'code': 99999}
 
     return _decorator
+
 
 #
 # # 检查访问是否重复
@@ -212,6 +236,18 @@ def check_api_cost_time(method):
 #             # return package_ret_data_from_server({'code': ED.err_sys})
 #
 #     return _decorator
+def getHostnameOfUrl(url):
+    # (?xi)\A
+    # [a - z][a - z0 - 9 +\-.] *: //  # Scheme
+    # ([a - z0 - 9\-._
+    # ~ %!$ & '()*+,;=]+@)?           # User
+    # ([a - z0 - 9\-._
+    # ~ %]+                           # Named or IPv4 host
+    # | \[[a - z0 - 9\-._
+    # ~ %!$ & '()*+,;=:]+\])          # IPv6+ host
+    reobj = re.compile(r"(?xi)\A[a-z][a-z0-9+\-.]*://([a-z0-9\-._~%!$&'()*+,;=]+@)?([a-z0-9\-._~%]+|[a−z0−9\-.])")
+    return reobj.search(url).group(2)
+
 
 # 获取IP
 def getClientRemoteIP(request):
@@ -235,6 +271,8 @@ def getClientRemoteIP(request):
             ret = ip
             break
         return ret
+
+
 def package_json_request_data(method):
     @wraps(method)
     def _decorator(*args, **kwargs):
@@ -246,11 +284,12 @@ def package_json_request_data(method):
                 temp_raw_map = {}
                 for temp_item in temp_raw_data:
                     temp_raw_map[temp_item[0]] = temp_item[1]
-                request.data =  temp_raw_map
+                request.data = temp_raw_map
             request.data['ip'] = getClientRemoteIP(request)
             ret = method(*args, **kwargs)
             return ret
         except Exception, e:
             # logger.error(repr(traceback.format_exc()))
             return "%s package_json_request_data error" % str(request)
+
     return _decorator

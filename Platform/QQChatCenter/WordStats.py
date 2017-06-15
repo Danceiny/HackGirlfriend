@@ -11,7 +11,7 @@ from collections import defaultdict
 import Libraries.Utils as utils
 import jieba.analyse
 from optparse import OptionParser
-FILE_JSON_RECORDS = u'json汪睿(1458110685).txt'
+FILE_JSON_RECORDS = u'json汪睿(1458110685).sec.txt'
 
 READ_CACHE_LINES = 10000
 

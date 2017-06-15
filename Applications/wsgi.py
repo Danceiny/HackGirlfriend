@@ -53,4 +53,4 @@ socketio.init_app(app)
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":
     # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
-    socketio.run(app, debug=True, host="127.0.0.1",port=8098)#host0000可从外网访问
+    socketio.run(app, debug=True, host="0.0.0.0",port=8098)#host0000可从外网访问
