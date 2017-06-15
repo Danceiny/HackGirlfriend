@@ -3,23 +3,27 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-from ctypes import *
 import time
-import os
+
 import codecs
 import re
 import json
-from collections import defaultdict,Counter
-import Libraries.Utils as utils
-import numpy as np
 
-import matplotlib.pyplot as plt
-# global variables
-
-FILE_TO_READ = u'汪睿(1458110685).txt'
-FILE_JSON_RECORDS = u'json' + FILE_TO_READ
 READ_CACHE_LINES = 10000
 
+def load_FILE_conf(debug=False):
+    with codecs.open('FILE.conf.sec.txt', 'r', 'utf-8') as f:
+        variables = {}
+        for line in f.readlines():
+            print line
+            names = line.split('=')
+            if not variables.has_key(names[0].strip()):
+                variables[names[0].strip()] = names[1].strip()
+            globals()[names[0].strip()] = names[1].strip()  # 加载到全局变量中
+        return variables
+
+if __name__ == '__main__':
+    load_FILE_conf()
 
 def get_records_from_json_file(filename,debug=False):
     with codecs.open(filename, 'r','utf-8') as f:
@@ -102,15 +106,4 @@ def write_records_with_json(records,filename):
     #
     #         f.write(json.dumps(record,ensure_ascii=False))#record is unicode!!!
     #         f.write('\n')
-
-
-
-# key/high frep words
-
-# _,records = get_records_from_raw_qqchat_file(FILE_TO_READ)
-# write_records_with_json(records,FILE_JSON_RECORDS)
-# # print get_records_from_json_file(FILE_JSON_RECORDS)
-# hourProcess(records)
-
-# topic
 
