@@ -7,7 +7,9 @@ sys.setdefaultencoding('utf-8')
 
 from flask import request, make_response, jsonify
 from functools import wraps
-from MyCrypto import *
+import platform
+if 'Win' not in platform.platform():
+    from MyCrypto import *
 import Platform.ErrorDefine as ED
 import hashlib
 import md5
