@@ -3,18 +3,18 @@ import sys
 import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# sys.path.append(os.path.join(os.path.dirname(os.path.basename(__file__)),os.path.pardir))
-# print sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把HackGirlfriend目录加载到$PYTHONPATH中
 
 from flask import Flask
 from flask_gzip import Gzip
 from werkzeug.routing import BaseConverter
 from flask_socketio import SocketIO
-# from Libraries.DBModel import *
+from Libraries.DBModel import *
 from Libraries.Utils import *
 from QQBot.QQBot import QQBot
 from Speak.Speak import Speak
+from Admin.Admin import Admin
+from Secret.Secret import Secret
 socketio = SocketIO()
 
 def configure_blueprints(app):
@@ -22,16 +22,10 @@ def configure_blueprints(app):
 
     # 初始化数据库模型
     # DBModelFactory.instance()
+    app.register_blueprint(Admin, url_prefix="/")
     app.register_blueprint(QQBot, url_prefix="/")
     app.register_blueprint(Speak, url_prefix="/")
-    # app.register_blueprint(Config, url_prefix="/")
-    # app.register_blueprint(User, url_prefix="/")
-    # app.register_blueprint(News, url_prefix="/")
-    # app.register_blueprint(Apply, url_prefix="/")
-    # app.register_blueprint(Pay, url_prefix="/")
-    # app.register_blueprint(Boss, url_prefix="/")
-    # app.register_blueprint(Web, url_prefix="/")
-
+    app.register_blueprint(Secret, url_prefix="/")
 
 class RegexConverter(BaseConverter):
     def __init__(self, url_map, *items):
@@ -53,4 +47,4 @@ socketio.init_app(app)
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":
     # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
-    socketio.run(app, debug=True, host="0.0.0.0",port=8098)#host0000可从外网访问
+    socketio.run(app, debug=True, host="0.0.0.0",port=8098)

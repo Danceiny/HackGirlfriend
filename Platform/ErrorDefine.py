@@ -29,6 +29,12 @@ err_phone_is_not_used = 521
 err_can_not_apply_info = 522
 err_is_old_user = 523
 
+err_no_auth = 524
+err_can_not_again_apply = 525
+
+err_query_fail = 526
+err_params = 527
+
 Message = {}
 Message[unknown_err] = 'unknown error'
 Message[no_err] = 'no error'
@@ -42,3 +48,7 @@ Message[err_phone_existed] = 'err_phone_existed'
 Message[err_phone_is_not_used] = 'err_phone_is_not_used'
 Message[err_can_not_apply_info] = 'err_can_not_apply_info'
 Message[err_is_old_user] = 'err_is_old_user'
+Message[err_no_auth] = 'err_no_auth'
+Message[err_can_not_again_apply] = 'err_can_not_again_apply'
+Message[err_query_fail] = 'err_query_fail'
+Message[err_params] = 'err_params'
