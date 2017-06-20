@@ -13,9 +13,9 @@ import MySQLdb
 from Singleton.Singleton import Singleton
 from PackageData.DBConfigs import *
 
-# from LogCenter.LogCenter import LogCenter
-#
-# logger = LogCenter.instance().get_logger('ExceptionLog')
+from Platform.LogCenter.LogCenter import LogCenter
+
+logger = LogCenter.instance().get_logger('ExceptionLog')
 
 global base_db_models
 if 'base_db_models' not in dir():

@@ -16,13 +16,17 @@ import requests
 from lxml import etree
 import time
 RAND_RANGE = (1000,10000)
-URL = 'http://old.cecctm.com/news.asp?id=796'
+
 import random
 from Configs import *
+
 class ArticleParser:
     def __init__(self,tree=None,url_example=''):
         self.tree = tree
         self.url_example = url_example
+
+class HupuPostParser(ArticleParser):
+    pass
 
 class KexuewangBlogParser(ArticleParser):
     # self.url_example = http://blog.sciencenet.cn/blog-117889-804430.html

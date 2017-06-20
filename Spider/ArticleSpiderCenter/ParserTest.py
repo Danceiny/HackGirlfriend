@@ -22,7 +22,7 @@ from Configs import *
 import re
 ############## data normalization ##############
 
-from Utils import *
+from Util import *
 from Parser import *
 
 from Libraries.Utils import *
