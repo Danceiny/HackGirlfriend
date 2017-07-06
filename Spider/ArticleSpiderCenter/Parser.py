@@ -26,11 +26,65 @@ class ArticleParser:
         self.url_example = url_example
 
 class HupuPostParser(ArticleParser):
+    # html.decode('utf-8', 'ignore')
+    # self.url_example = https://bbs.hupu.com/19453374.html
+    def parse_post_content(self,tree,debug=True):
+        titleElement = tree.find('.//div/h1[@id="j_data"]')
+        title = titleElement.attrib.get('data-title','')
+        fidname = titleElement.attrib.get('fidname','') #影视区
+        replyStat = titleElement.attrib.get('data-replies','')
+        statsElement = tree.find('.//div/span')
+        stats = statsElement.text.decode('utf-8')
+        print stats
+
+        authorElement = tree.find('.//div[@class="author"]')
+        hupuIdElement = authorElement.find('.//a[@class="u"]')
+        # print authorElement,dir(authorElement)
+        # print hrefs[0].attrib
+        personalHomepage = hupuIdElement.attrib.get('href','')
+        print personalHomepage
+
+        hupuGradeElement = authorElement.find('.//span/a')
+
+
+        personalPosts = hupuGradeElement.attrib.get('href','')
+        hupuGrade = hupuGradeElement.text   # '32级' 汉字乱码
+
+        print personalPosts,hupuGrade
+
+        pubTimeElement = authorElement.xpath('//span[@class="stime"]')
+        if type(pubTimeElement) == list:
+            pubTime = pubTimeElement[0].text    #2017-06-16 21:11
+        print pubTime
+        pass
+
+        quoteContentElement = tree.xpath('.//div[@class="quote-content"]')
+        print len(quoteContentElement)
+        content = ''
+        for para in quoteContentElement:
+            content += etree.tostring(para,pretty_print=True,method='html',encoding='utf-8')
+
+        floors = tree.find('.//div[@id="readfloor"]')
+        i = 0
+        for floor in floors:
+            i+=1
+            replyerHupuId = floor.xpath('.//div[@class="user"]/div/@uname')[0]
+            # .atrrib.get('uname','')
+            floorBox = floor.find('.//div[@class="floor_box"]')
+            replyTime = floorBox.find('.//span[@class="stime"]').text
+            highlightsStat = floorBox.find('.//span[@class="ilike_icon_list"]/span[@class="stime"]').text
+
+            replyContent = floorBox.find('.//table/tbody')
+            print "第 ", i, " 楼",replyerHupuId,replyTime,highlightsStat,replyContent
+
+
+    def get_more_urls(self,tree,debug=True):
+        pass
     pass
 
 class KexuewangBlogParser(ArticleParser):
     # self.url_example = http://blog.sciencenet.cn/blog-117889-804430.html
-    def parse_news_content(self,tree,debug=True):
+    def parse_blog_content(self, tree, debug=True):
         articleElement = tree.find('.//div[@id="blog_article"]')
         titleElement = tree.find('.//h1[@class="ph"]')
         title = titleElement.text.strip()

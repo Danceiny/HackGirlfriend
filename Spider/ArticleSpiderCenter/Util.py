@@ -23,21 +23,22 @@ def grab_tree(url,timeout=1):
             return etree.HTML(r.text)
         timeout -= 1
 
-def save_tree(url,filename):
+def save_tree(url,filename,encoding='utf-8'):
     r = requests.get(url)
-    f = open(filename, 'wb')
-    pickle.dump(r.text, f, protocol=2)
-    f.close()
+    # r.text is unicode
+    with codecs.open(filename, 'w', encoding) as f:
+        pickle.dump(r.text, f)#, protocol=2
+
 
 def save_trees(urls):
     for url in urls:
         save_tree(url)
 
-def resume_tree(filename):
-    with codecs.open(filename, 'rb') as f:
+def resume_tree(filename,encoding='utf-8'):
+    with codecs.open(filename, 'r',encoding) as f:
         return etree.HTML(pickle.loads(f.read()))
 
-def resume_trees(filenames):
+def resume_trees(filenames,encoding='utf-8'):
     for filename in filenames:
-        with codecs.open(filename, 'rb') as f:
+        with codecs.open(filename, 'r',encoding) as f:
             return etree.HTML(pickle.loads(f.read()))

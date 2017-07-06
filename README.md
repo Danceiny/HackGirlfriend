@@ -1,27 +1,15 @@
 # Hack Girlfriend
 
-## 隐私说明
-涉及聊天记录、账号密码等隐私信息的文件，请以'sec.txt'为后缀名。
+## 关于本项目 
+
+[![](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/download/releases/3.4.0/) [![](https://img.shields.io/badge/python-3.5-green.svg)](https://www.python.org/downloads/release/python-352/)
+ [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/ResolveWang)
+
+**本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**
 
 
-## 项目目录结构说明
-### Applications
-单个应用以flask-blueprint来做，在Applications里做路由转发。
 
-### Platform
-Applications转发到此（有一个对应关系）。
-
-### Docs
-项目中用到的技术，学习中可以留下**简要**的文档。
-
-### Libraries
-项目中用到的库（第三方或者自建）。
-
-### PackageData
-公用配置信息。（暂时还没太想好）
-
-### Spider
-项目中用到的爬虫。
 
 ## TODO LIST
 
@@ -41,6 +29,41 @@ Applications转发到此（有一个对应关系）。
 
 # Refs
 
+# Copyrights
+Spring Oscillator 2017 &copy; Danceiny
+All rights reserved.
 
+项目中可能使用了某些开源代码，若未声明原作者，概疏忽所致，概不负责。
+
+# Contributers 📢
+
+## 协作隐私约定
+    涉及账号密码等隐私信息的配置文件，请以'sec.*'为后缀名。
+    
+## 协作项目目录结构说明
+
+### Applications
+单个应用以flask-blueprint来做，在Applications里做路由转发。
+
+### Platform
+Applications转发到此（有一个对应关系）。
+
+### Docs
+项目中用到的技术，学习中可以留下**简要**的文档。
+
+### Libraries
+项目中用到的库（第三方或者自建）。
+
+### PackageData
+公用配置信息。（暂时还没太想好）
+
+### Spider
+项目中用到的爬虫。
+
+
+
+## 协作者
+- 
+- 
 
 
