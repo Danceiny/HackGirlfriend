@@ -10481,7 +10481,7 @@
                     zDepth: 0,
                     iconElementRight: p["default"].createElement(v["default"], {
                         iconClassName: "muidocs-icon-custom-github",
-                        href: "https://github.com/dongweiming/commentbox"
+                        href: "https://github.com/Danceiny/HackGirlfriend"
                     }),
                     style: i.appBar,
                     showMenuIconButton: u
@@ -10496,7 +10496,7 @@
                 }), p["default"].createElement(P["default"], {style: i.footer}, p["default"].createElement(v["default"], {
                     iconStyle: i.iconButton,
                     iconClassName: "muidocs-icon-custom-github",
-                    href: "https://github.com/dongweiming/commentbox"
+                    href: "https://github.com/Danceiny/HackGirlfriend"
                 }), p["default"].createElement("p", {style: r(i.netease)}, "Thank you to ", p["default"].createElement("a", {
                     href: "http://music.163.com/",
                     style: r(i.neteaseLogo),

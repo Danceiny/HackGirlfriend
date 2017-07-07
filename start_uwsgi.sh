@@ -1,0 +1,1 @@
+uwsgi --socket 127.0.0.1:8089 --protocol=http --chdir /home/ubuntu/web2/HackGirlfriend --wsgi-file /home/ubuntu/web2/HackGirlfriend/Applications/wsgi.py --virtualenv /home/ubuntu/web2/ --chmod-socket=666 --enable-threads

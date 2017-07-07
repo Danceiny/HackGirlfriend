@@ -11,7 +11,7 @@ import threading
 import logging
 import urllib
 from HttpClient import HttpClient
-import Utils as util
+import Util as util
 
 from QMessage import QMessage
 from Login import Login

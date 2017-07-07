@@ -1,0 +1,6 @@
+# coding=utf-8
+#  优先于configs.py
+# REDIS_HOST = "192.168.136.2"
+MONGODB_HOST = "192.168.136.2"
+MONGODB_PORT = 27017
+REDIS_PORT = 6379

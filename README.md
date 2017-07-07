@@ -1,27 +1,39 @@
 # Hack Girlfriend
 
-## 隐私说明
-涉及聊天记录、账号密码等隐私信息的文件，请以'sec.txt'为后缀名。
+## 关于本项目 
 
+[![](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/download/releases/3.4.0/) [![](https://img.shields.io/badge/python-3.5-green.svg)](https://www.python.org/downloads/release/python-352/)
+ [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/ResolveWang)
 
-## 项目目录结构说明
-### Applications
-单个应用以flask-blueprint来做，在Applications里做路由转发。
+**本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**
 
-### Platform
-Applications转发到此（有一个对应关系）。
+## 服务器部署示例
+以 腾讯云 Ubuntu 16 64bit 为例。
 
-### Docs
-项目中用到的技术，学习中可以留下**简要**的文档。
+### Pre-requisites
+- mysql-server / libmysqld
+- nginx
+- uwsgi
+### Nginx + uWSGI
+nginx配置 uwsgi_pass, 可以是sock文件，可以是ip:port。
 
-### Libraries
-项目中用到的库（第三方或者自建）。
+/etc/nginx/conf.d/*.conf
 
-### PackageData
-公用配置信息。（暂时还没太想好）
+uwsgi的配置文件socket=对应nginx的uwsgi_pass。
 
-### Spider
-项目中用到的爬虫。
+uwsgi配置 uwsgi.ini:
+```ini
+socket = 
+pythonpath = 
+home = # venv / virtualenv / ...
+plugin = python,http
+...
+```
+### Common commands
+- ps -ef | grep nginx
+- service nginx start/reload/stop
+
 
 ## TODO LIST
 
@@ -40,7 +52,43 @@ Applications转发到此（有一个对应关系）。
     
 
 # Refs
+- https://github.com/xiyouMc/WebHubBot/
+
+# Copyrights
+Spring Oscillator 2017 &copy; Danceiny
+All rights reserved.
+
+项目中可能使用了某些开源代码，若未声明原作者，概疏忽所致，概不负责。
+
+# Contributers 📢
+
+## 协作隐私约定
+    涉及账号密码等隐私信息的配置文件，请以'sec.*'为后缀名。
+    
+## 协作项目目录结构说明
+
+### Applications
+单个应用以flask-blueprint来做，在Applications里做路由转发。
+
+### Platform
+Applications转发到此（有一个对应关系）。
+
+### Docs
+项目中用到的技术，学习中可以留下**简要**的文档。
+
+### Libraries
+项目中用到的库（第三方或者自建）。
+
+### PackageData
+公用配置信息。（暂时还没太想好）
+
+### Spider
+项目中用到的爬虫。
 
 
+
+## 协作者
+- 
+- 
 
 

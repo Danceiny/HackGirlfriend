@@ -7,8 +7,10 @@ sys.setdefaultencoding('utf-8')
 
 from flask import request, make_response, jsonify
 from functools import wraps
-# from MyCrypto import *
-import ErrorDefine as ED
+import platform
+if 'Win' not in platform.platform():
+    from MyCrypto import *
+import Platform.ErrorDefine as ED
 import hashlib
 import md5
 import datetime
@@ -21,7 +23,7 @@ import re
 import random
 import pytz
 import uuid
-
+from PackageData.PackageNormalData import *
 
 # MAC ADDRESS
 def get_mac_address():
@@ -50,7 +52,9 @@ def allow_cross_domain(method):
 
     return _decorator
 
-
+##########################################
+# 时间相关 Start
+##########################################
 def convert_int_2_string_single(int_time, onlydate=False, only_m_d=False):
     key_time = time.localtime(int_time)
     if onlydate == True:
@@ -147,6 +151,10 @@ def check_api_cost_time(method):
             return {'code': 99999}
 
     return _decorator
+
+##########################################
+#  时间相关 End                           #
+##########################################
 
 
 #
@@ -271,7 +279,16 @@ def getClientRemoteIP(request):
             ret = ip
             break
         return ret
-
+# 获取本地IP地址
+def getLocalIP(outside=True):
+    import socket, fcntl, struct
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    if outside == True:
+        inet = fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', "eth1"[:15]))
+        return socket.inet_ntoa(inet[20:24])
+    else:
+        inet = fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', "eth0"[:15]))
+        return socket.inet_ntoa(inet[20:24])
 
 def package_json_request_data(method):
     @wraps(method)
@@ -291,5 +308,113 @@ def package_json_request_data(method):
         except Exception, e:
             # logger.error(repr(traceback.format_exc()))
             return "%s package_json_request_data error" % str(request)
+
+    return _decorator
+
+
+##########################################
+# 管理后台令牌相关
+##########################################
+ADMIN_TOKEN_EXPIRED = 8640000
+
+def secret_make_token():
+    pass#TODO
+    return ''
+
+def admin_check_login():
+    token = request.cookies.get('_admin_token_') or request.args.get('_admin_token_')
+    if len(token or '') <= 0:
+        return False
+
+    token = package_data_fromclient_json_post_boss(token, app_key="token")
+    if token:
+        if token.get('token_time', 0) + int(token.get('token_expired', ADMIN_TOKEN_EXPIRED)) < int(time.time()):
+            # 令牌过期
+            return False
+        # elif token.get('ua') != request.user_agent.string:
+        #     # 此令牌不是这台设备获取的
+        #     return False
+        else:
+            from AdminCenter.BossUserCenter.BossUserCenter import BossUserCenter
+            info = BossUserCenter.instance().get_boss_user_info(token['username'])
+            if len(info) > 0:
+                token.update(info)
+                request.admin_token = token
+                return True
+    return False
+
+
+def admin_make_token(data):
+    token_data = {
+        "username": data['username'],
+        "token_time": int(time.time()),
+        "ua": request.user_agent.string
+    }
+    if data.has_key('token_expired'):
+        token_data['token_expired'] = int(data['token_expired'])
+    return package_data_toserver_json_post_boss(token_data, app_key="token")
+
+
+def admin_check_auth(permission, *args, **kwds):
+    def real_decorator(method):
+        @wraps(method)
+        def wrapped(*args, **kwds):
+            if admin_check_login():
+                if len(permission) == 0:
+                    # 不需要权限
+                    return method(*args, **kwds)
+                userpermission = request.admin_token['permission']
+                # 检查权限
+                if 'all' in userpermission or int(permission) in userpermission:
+                    return method(*args, **kwds)
+            return jsonify({"code": ED.err_no_auth})
+
+        return wrapped
+
+    return real_decorator
+
+
+##########################################
+# 用户令牌相关
+##########################################
+USER_TOKEN_EXPIRED = 864000
+
+
+def user_make_token(data):
+    token_data = {
+        "id_number": data['id_number'],
+        "token_time": int(time.time()),
+        "ua": request.user_agent.string
+    }
+    if data.has_key('token_expired'):
+        token_data['token_expired'] = int(data['token_expired'])
+    return package_data_toserver_json_post_boss(token_data, app_key="user_token")
+
+
+def check_user_token(method):
+    @wraps(method)
+    def _decorator(*args, **kwargs):
+        return method(*args, **kwargs)
+        # result = {"code":ED.err_user_not_login}
+        # try:
+        #     token = request.headers.get('_cecctm_token_') or request.cookies.get('_cecctm_token_') or request.args.get('_cecctm_token_') or request.form.get('_cecctm_token_')
+        #     if len(token or '') <= 0:
+        #         return result
+        #     token = package_data_fromclient_json_post_boss(token, app_key="user_token")
+        #     if token:
+        #         if token.get('token_time', 0) + int(token.get('token_expired', USER_TOKEN_EXPIRED)) < int(time.time()):
+        #             # 令牌过期
+        #             return result
+        #         # elif token.get('ua') != request.user_agent.string:
+        #         #     # 此令牌不是这台设备获取的
+        #         #     return result
+        #         else:
+        #             request.data['token_time'] = token['token_time']
+        #             request.data['id_number'] = token['id_number']  # 把请求中的id_number替换为token中的id_number
+        #             return method(*args, **kwargs)
+        # except Exception, e:
+        #     logger.error(repr(traceback.format_exc()))
+        #     result['code'] = ED.err_sys
+        # return result
 
     return _decorator
