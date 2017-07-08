@@ -85,7 +85,7 @@ class DBModelFactory():
 # /**
 #  * DBModel.py    基础数据操作类
 #  *
-#  * @copyright            (C) Graig
+#  * @copyright            (C) Danceiny
 #  * @lastmodify            2015-6-6
 #  */
 class DBModel():
@@ -234,7 +234,7 @@ class DBModel():
         self.connection = None
         self.lastresult = None
 
-    def _connet_db(self):
+    def _connect_db(self):
         if self.connection == None:
             self.connection = pymysql.connect(
                 host=self.readonly and DBModel.choose_mysql_host_s(self.db_config['host_s']) or self.db_config['host'],
@@ -265,7 +265,7 @@ class DBModel():
     def executemanay(self, sql, data, options=None, connected=False):
         try:
             if connected == False:
-                self._connet_db()
+                self._connect_db()
 
             cursor = self.connection.cursor()
             if options != None:
@@ -291,7 +291,7 @@ class DBModel():
     def execute(self, sql, options=None, connected=False):
         try:
             if connected == False:
-                self._connet_db()
+                self._connect_db()
 
             cursor = self.connection.cursor()
             if options != None:
@@ -323,7 +323,7 @@ class DBModel():
         try:
             sqls = self._generate_sqls(sql, options)
             if connected == False:
-                self._connet_db()
+                self._connect_db()
             for sql in sqls:
                 if self.execute(sql, connected=True) != None:
                     result_one = self.lastresult.fetchone()
@@ -346,7 +346,7 @@ class DBModel():
             limit_count = options and options.get('limit_count')
             sqls = self._generate_sqls(sql, options)
             if connected == False:
-                self._connet_db()
+                self._connect_db()
             for sql in sqls:
                 if self.execute(sql, connected=True) != None:
                     result_list.extend(self.lastresult.fetchall())
@@ -405,7 +405,7 @@ class DBModel():
     def TransationStart(self):
         if self.readonly:
             return
-        self._connet_db()
+        self._connect_db()
         self.tansationstart = True
 
     # 成功执行

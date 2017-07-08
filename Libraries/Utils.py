@@ -9,21 +9,15 @@ from flask import request, make_response, jsonify
 from functools import wraps
 import platform
 if 'Win' not in platform.platform():
-    from MyCrypto import *
-import Platform.ErrorDefine as ED
-import hashlib
-import md5
+    pass
+import Libraries.ErrorDefine as ED
 import datetime
 import time
-import traceback
-import urlparse
 import json
-import urllib2
 import re
-import random
 import pytz
 import uuid
-from PackageData.PackageNormalData import *
+
 
 # MAC ADDRESS
 def get_mac_address():
