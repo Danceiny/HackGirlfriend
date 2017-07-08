@@ -1,5 +1,4 @@
 # -*- coding: utf-8
-print __name__
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -70,4 +69,32 @@ def find_user():
         result = zuiwanCenter.find_user(data)
     else:
         result['code'] = ED.err_sys
+    return json.dumps(result)
+
+
+@ZuiwanUser.route('api/v1/mysql-dbtest',methods=['GET'],endpoint='mysql-dbtest')
+@check_api_cost_time
+@allow_cross_domain
+@package_json_request_data
+def mysql_dbtest():
+    result = {'code':ED.no_err,'data':{}}
+    data = request.data
+    if data != None:
+        from Temp.DBtest import DBtest
+        dbtest = DBtest.instance()
+        if data.get('action') == 'add':
+            result = dbtest.insert(data)
+        elif data.get('action') == 'update':
+            result = dbtest.update(data)
+        elif data.get('action') == 'delete':
+            result = dbtest.delete(data)
+        elif data.get('action') == 'find':
+            result = dbtest.select(data)
+            print result
+
+        else:
+            result['code'] = ED.err_params
+    else:
+        # result['code'] = ED.err_sys
+        result['code'] = 'fuckyou'
     return json.dumps(result)

@@ -26,11 +26,11 @@ class ZuiwanDBManager():
         # self.table_name_user_keys = json.loads(self.conf.get('RDS', 'table_name_zuiwan_user_keys'))
         self.table_name_user = "zuiwan_user"
         self.table_name_user_count = 1
-        self.table_name_user_keys = ['zuser_id', 'nick_name', 'email', 'create_time', 'avatar_url', 'credits','role']
+        self.table_name_user_keys = ('zuser_id', 'nick_name', 'email', 'create_time', 'avatar_url', 'credits','role','psw')
 
         self.table_name_meeting = "zuiwan_meeting"
         self.table_name_meeting_count = 1
-        self.table_name_meeting_keys = ['meeting_id','topic','start_time','duration','des','people']
+        self.table_name_meeting_keys = ('meeting_id','topic','start_time','duration','des','people')
         # 学校相关的信息存储到另一张表，由zuser_id关联
 
 
@@ -103,7 +103,7 @@ class ZuiwanDBManager():
     def update_user(self,data,params=None):
         result = {'code':ED.no_err}
         if params == None or len(params) == 0:
-            params = self.table_name_keys
+            params = self.table_name_user_keys
         try:
             sql_update_user = DBModel.sql_update(self.table_name_user,data,where=DBModel.sql_and({'zuser_id':data['zuser_id']}),keys=params)
             flag = self.db_model.execute(sql_update_user,options={'table_index':self.table_name_user_count -1})

@@ -19,8 +19,6 @@ class ZuiwanCenter(object):
         self.logger = LogCenter.instance().get_logger('ZuiwanCenterLog')
         self.zuiwanDBManager = ZuiwanDBManager.instance()
 
-
-
 #################   user part  #########################
     def get_user_detail(self,data):
         ret_info = {'code': ED.no_err, 'data': {}}

@@ -5,7 +5,6 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把HackGirlfriend目录加载到$PYTHONPATH中
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-print sys.path
 from flask import Flask
 from flask_gzip import Gzip
 from werkzeug.routing import BaseConverter
