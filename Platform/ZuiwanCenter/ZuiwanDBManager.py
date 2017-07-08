@@ -40,14 +40,14 @@ class ZuiwanDBManager():
         select_sql = DBModel.sql_select(self.table_name_user,
         keys=data.get('keys',['zuser_id', 'nick_name', 'email', 'create_time', 'avatar_url', 'credits','role']),
         limit='0,%d' % limit_count, order=[{'key': 'credits', 'desc': True}])
-        records = self.db_model_read.GetList(select_sql, options={"table_count": self.table_name_user_count})
+        records = self.db_model.GetList(select_sql)
         return records
 
     def get_user_detail(self, data):
         zuser_id = str(data['zuser_id'])
         where_condition = DBModel.sql_and({"zuser_id": zuser_id})
         sql = DBModel.sql_select(self.table_name_user, where=where_condition)
-        records = self.db_model_read.GetOne(sql, options={"table_count": self.table_name_news_count})
+        records = self.db_model.GetOne(sql)
         return records
 
     def find_user(self, data):
@@ -61,7 +61,7 @@ class ZuiwanDBManager():
                                         keys=self.table_name_user_keys,
                                         where="`%s` like '%%%s%%'" % (data.get('queryType',''),data.get('queryContent','')),
                                         limit='0,%d' % limit_count, order=[{'key': 'create_time', 'desc': True}])
-        records = self.db_model_read.GetList(select_sql, options={"table_count": self.table_name_user_count})
+        records = self.db_model_read.GetList(select_sql)
         return records
 
     def add_user(self, data):
@@ -77,7 +77,7 @@ class ZuiwanDBManager():
         else:
             return {'code':ED.err_params}
         sql = self.db_model.sql_insert(table=self.table_name_user, data=data, keys=self.table_name_keys)
-        flag = self.db_model.execute(sql, options={"table_index": self.table_name_user_count - 1})
+        flag = self.db_model.execute(sql)
         if flag == None or flag.rowcount <= 0:
             result['code'] = ED.unknown_err
         return result
@@ -92,7 +92,7 @@ class ZuiwanDBManager():
                 sql_delete_user = DBModel.sql_delete(self.table_name_user,where=DBModel.sql_and({'nick_name':data['nick_name']}))
             else:
                 return {'code':ED.err_params}
-            ret_del = self.db_model.execute(sql_delete_user,options={"table_index":self.table_name_user_count - 1})
+            ret_del = self.db_model.execute(sql_delete_user)
             if ret_del == None:
                 result['code'] = ED.err_sys
         except Exception,e:
@@ -106,7 +106,7 @@ class ZuiwanDBManager():
             params = self.table_name_user_keys
         try:
             sql_update_user = DBModel.sql_update(self.table_name_user,data,where=DBModel.sql_and({'zuser_id':data['zuser_id']}),keys=params)
-            flag = self.db_model.execute(sql_update_user,options={'table_index':self.table_name_user_count -1})
+            flag = self.db_model.execute(sql_update_user)
             if flag == None:
                 result['code'] = self.add_user(data)['code']
         except Exception,e:
@@ -128,7 +128,7 @@ class ZuiwanDBManager():
         if not 'meeting_id' in data or len(data.get('meeting_id') or '') <= 0:
             data['meeting_id'] = get_now_time_str_ms().replace('.', '')  # like '1497257116332'
         sql = self.db_model.sql_insert(table=self.table_name_meeting, data=data, keys=self.table_name_meeting_keys)
-        flag = self.db_model.execute(sql, options={"table_index": self.table_name_meeting_count - 1})
+        flag = self.db_model.execute(sql)
         if flag == None or flag.rowcount <= 0:
             result['code'] = ED.unknown_err
         return result
@@ -140,7 +140,7 @@ class ZuiwanDBManager():
         else:
             return {'code':ED.err_params}
         try:
-            ret_del = self.db_model.execute(sql_delete_meeting,options={"table_index":self.table_name_meeting_count - 1})
+            ret_del = self.db_model.execute(sql_delete_meeting)
             if ret_del == None:
                 result['code'] = ED.err_sys
         except Exception,e:
@@ -154,7 +154,7 @@ class ZuiwanDBManager():
             params = self.table_name_keys
         try:
             sql_update_meeting = DBModel.sql_update(self.table_name_user,data,where=DBModel.sql_and({'meeting_id':data['meeting_id']}),keys=params)
-            flag = self.db_model.execute(sql_update_meeting,options={'table_index':self.table_name_user_count -1})
+            flag = self.db_model.execute(sql_update_meeting)
             if flag == None:
                 result['code'] = self.add_user(data)['code']
         except Exception,e:
