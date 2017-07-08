@@ -67,6 +67,7 @@ class DBtest():
                 sql_delete_user = DBModel.sql_delete(self.table_name_user,where=DBModel.sql_and({'nick_name':data['nick_name']}))
             else:
                 return {'code':ED.err_params}
+            print sql_delete_user
             ret_del = self.db_model.execute(sql_delete_user)
             if ret_del == None:
                 result['code'] = ED.err_sys
