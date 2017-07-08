@@ -2,13 +2,38 @@
 
 ## 关于本项目 
 
-[![](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/download/releases/3.4.0/) [![](https://img.shields.io/badge/python-3.5-green.svg)](https://www.python.org/downloads/release/python-352/)
+[![](https://img.shields.io/badge/python-2.7-green.svg)](https://www.python.org/download/releases/3.4.0/) 
  [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/ResolveWang)
 
 **本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**
 
+## 服务器部署示例
+以 腾讯云 Ubuntu 16 64bit 为例。
 
+### Pre-requisites
+- mysql-server / libmysqld
+- nginx
+- uwsgi
+### Nginx + uWSGI + supervisor
+nginx配置 uwsgi_pass, 可以是sock文件，可以是ip:port。
+`pip install uwsgi`
+`pip install supervisor`
+/etc/nginx/conf.d/*.conf
+
+uwsgi的配置文件socket=对应nginx的uwsgi_pass。
+
+uwsgi配置 uwsgi.ini:
+```ini
+socket = 
+pythonpath = 
+home = # venv / virtualenv / ...
+plugin = python,http
+...
+```
+### Common commands
+- ps -ef | grep nginx
+- service nginx start/reload/stop
 
 
 ## TODO LIST
@@ -28,6 +53,7 @@
     
 
 # Refs
+- https://github.com/xiyouMc/WebHubBot/
 
 # Copyrights
 Spring Oscillator 2017 &copy; Danceiny
@@ -60,10 +86,10 @@ Applications转发到此（有一个对应关系）。
 ### Spider
 项目中用到的爬虫。
 
-
+### Temp
+临时代码。
 
 ## 协作者
 - 
 - 
-
 
