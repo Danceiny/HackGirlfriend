@@ -12,7 +12,7 @@ import logging.config
 
 from logging.handlers import RotatingFileHandler
 
-output_log_basepath = '/var/log/HackGrilfriend/'
+output_log_basepath = '/var/log/HackGirlfriend/'
 global_loggers = None
 
 

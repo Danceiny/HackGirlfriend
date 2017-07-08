@@ -1,4 +1,5 @@
 # -*- coding: utf-8
+print __name__
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -9,7 +10,6 @@ from Platform.ZuiwanCenter.ZuiwanCenter import ZuiwanCenter
 zuiwanCenter = ZuiwanCenter.instance()
 # 实例化一个blueprint
 ZuiwanUser = Blueprint("ZuiwanUser", __name__)
-
 # Description
 
 @ZuiwanUser.route('api/v1/zuiwan/user/modify', methods = ['POST'], endpoint='modify-user')
