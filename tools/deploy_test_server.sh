@@ -4,7 +4,9 @@
 echo "从 Windows-bash 部署-HackGirlfriend-测试服 @Tencent 118.89.27.96"
 ssh -i /mnt/c/Developer/workspaces/密钥/for_danceiny ubuntu@118.89.27.96 '
     cd /home/ubuntu/web2/HackGirlfriend
+    echo "-----------更新代码-----------"
     git pull
+    echo "-----------重启uwsgi-----------"
     sudo service uwsgi restart
     exit
 '
