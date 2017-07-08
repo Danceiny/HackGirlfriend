@@ -11,7 +11,7 @@ zuiwanCenter = ZuiwanCenter.instance()
 ZuiwanUser = Blueprint("ZuiwanUser", __name__)
 # Description
 
-@ZuiwanUser.route('api/v1/zuiwan/user/modify', methods = ['POST'], endpoint='modify-user')
+@ZuiwanUser.route('api/v1/zuiwan/user/modify', methods = ['POST','GET'], endpoint='modify-user')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data
@@ -90,8 +90,6 @@ def mysql_dbtest():
             result = dbtest.delete(data)
         elif data.get('action') == 'find':
             result = dbtest.select(data)
-            print result
-
         else:
             result['code'] = ED.err_params
     else:
