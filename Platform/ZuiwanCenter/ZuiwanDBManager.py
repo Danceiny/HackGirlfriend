@@ -61,7 +61,7 @@ class ZuiwanDBManager():
                                         keys=self.table_name_user_keys,
                                         where="`%s` like '%%%s%%'" % (data.get('queryType',''),data.get('queryContent','')),
                                         limit='0,%d' % limit_count, order=[{'key': 'create_time', 'desc': True}])
-        records = self.db_model_read.GetList(select_sql)
+        records = self.db_model.GetList(select_sql)
         return records
 
     def add_user(self, data):
@@ -76,7 +76,7 @@ class ZuiwanDBManager():
             data['create_time'] = get_now_time_int()
         else:
             return {'code':ED.err_params}
-        sql = self.db_model.sql_insert(table=self.table_name_user, data=data, keys=self.table_name_keys)
+        sql = self.db_model.sql_insert(table=self.table_name_user, data=data, keys=self.table_name_user_keys)
         flag = self.db_model.execute(sql)
         if flag == None or flag.rowcount <= 0:
             result['code'] = ED.unknown_err

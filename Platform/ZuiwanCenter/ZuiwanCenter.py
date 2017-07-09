@@ -40,7 +40,7 @@ class ZuiwanCenter(object):
         ret_info = {'code':ED.no_err,'data':{}}
         if 'zuser_id' not in data:
             data['zuser_id'] = get_now_time_str_ms().replace('.', '')   #关联关键字表需要a_id
-        ret_info['code'] = self.zuiwanDBManager.add_user(data)    #这里只返回errcode
+        ret_info['code'] = self.zuiwanDBManager.add_user(data)['code']    #这里只返回errcode
         ret_info['data']['zuser_id'] = data['zuser_id']
         return ret_info
 
