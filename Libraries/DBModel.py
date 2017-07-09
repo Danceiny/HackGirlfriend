@@ -35,14 +35,14 @@ class DBModelFactory():
         global base_db_models
         if base_db_models == None:
             base_db_models = {}
+            self.create_db_model(init_db_config)
 
-            db_model = self.create_db_model(init_db_config)
-
+            # db_model = self.create_db_model(init_db_config)
             # sql = "select `value` from `%s` where `key` = '%s' " % (
             # init_db_config['init_config_table'], init_db_config['init_config_key'])
             # db_configs = db_model.GetOne(sql)
             #
-            # # assert (db_configs != None, "db_model is none type")
+            # assert (db_configs != None, "db_model is none type")
             # db_configs = json.loads(db_configs['value'])
             #
             # for config in db_configs:
@@ -135,15 +135,10 @@ class DBModel():
         return sql
 
     @staticmethod
-    def sql_select(table, keys=None, where=None, limit=None, order=None, group=None):
-        if keys == None:
-            select_keys = '*'
-        else:
-            select_keys = ""
-            for key in keys:
-                select_keys = "%s`%s`, " % (select_keys, key)
-        sql = "select %s from `%s`" % (select_keys.rstrip(', '), table)
+    def sql_select_string(sql, where=None, limit=None, order=None, group=None):
         if where != None and len(where) > 0:
+            if type(where) == list:
+                where = " and ".join(where)
             sql += " where %s" % where
         if group != None and len(group) > 0:
             if type(group) == list:
@@ -169,8 +164,18 @@ class DBModel():
                 sql += " order by %s" % order
         if limit != None and len(str(limit)) > 0:
             sql += " limit %s" % str(limit)
-
         return sql
+
+    @staticmethod
+    def sql_select(table, keys=None, where=None, limit=None, order=None, group=None):
+        if keys == None:
+            select_keys = '*'
+        else:
+            select_keys = ""
+            for key in keys:
+                select_keys = "%s`%s`, " % (select_keys, key)
+        sql = "select %s from `%s`" % (select_keys.rstrip(', '), table)
+        return DBModel.sql_select_string(sql, where, limit, order, group)
 
     @staticmethod
     def sql_delete(table, where=None):
@@ -234,7 +239,7 @@ class DBModel():
         self.connection = None
         self.lastresult = None
 
-    def _connet_db(self):
+    def _connect_db(self):
         if self.connection == None:
             self.connection = pymysql.connect(
                 host=self.readonly and DBModel.choose_mysql_host_s(self.db_config['host_s']) or self.db_config['host'],
@@ -265,7 +270,7 @@ class DBModel():
     def executemanay(self, sql, data, options=None, connected=False):
         try:
             if connected == False:
-                self._connet_db()
+                self._connect_db()
 
             cursor = self.connection.cursor()
             if options != None:
@@ -291,7 +296,7 @@ class DBModel():
     def execute(self, sql, options=None, connected=False):
         try:
             if connected == False:
-                self._connet_db()
+                self._connect_db()
 
             cursor = self.connection.cursor()
             if options != None:
@@ -313,6 +318,15 @@ class DBModel():
 
         return self.lastresult
 
+    def GetCount(self, table, where=None, limit=None, order=None, group=None, options=None, connected=False):
+        sql = "select count(*) as `total_count` from `%s`" % table
+        sql = DBModel.sql_select_string(sql, where, limit, order, group)
+        ret = self.GetList(sql, options=options, connected=connected)
+        count = 0
+        for item in ret:
+            count += item['total_count']
+        return count
+
     # # 返回查询资源结果集
     # def Query(self, sql, options=None):
     #     return self.execute(sql)
@@ -323,7 +337,7 @@ class DBModel():
         try:
             sqls = self._generate_sqls(sql, options)
             if connected == False:
-                self._connet_db()
+                self._connect_db()
             for sql in sqls:
                 if self.execute(sql, connected=True) != None:
                     result_one = self.lastresult.fetchone()
@@ -346,7 +360,7 @@ class DBModel():
             limit_count = options and options.get('limit_count')
             sqls = self._generate_sqls(sql, options)
             if connected == False:
-                self._connet_db()
+                self._connect_db()
             for sql in sqls:
                 if self.execute(sql, connected=True) != None:
                     result_list.extend(self.lastresult.fetchall())
@@ -405,7 +419,7 @@ class DBModel():
     def TransationStart(self):
         if self.readonly:
             return
-        self._connet_db()
+        self._connect_db()
         self.tansationstart = True
 
     # 成功执行
