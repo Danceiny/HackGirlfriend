@@ -11,7 +11,6 @@ from Libraries.Utils import *
 from ZuiwanDBManager import ZuiwanDBManager
 
 # Descripion
-# 路由转发时不检查参数，在本模块检查，参数不正确直接返回None。
 
 @Singleton
 class ZuiwanCenter(object):
@@ -47,7 +46,7 @@ class ZuiwanCenter(object):
 
     def find_user(self, data):
         result = {'code': ED.no_err}
-        if 'queryType' in data and 'queryContent' in data:  # also: set(['queryType','queryContent']).issubset(data)
+        if 't' in data and 'c' in data:  # also: set(['t','c']).issubset(data)
             result['data'] = self.zuiwanDBManager.find_user(data)
         else:
             result['code'] = ED.err_params

@@ -17,7 +17,9 @@ import json
 import re
 import pytz
 import uuid
-
+import traceback
+from Platform.LogCenter.LogCenter import LogCenter
+logger = LogCenter.instance().get_logger('UtilsLog')
 
 # MAC ADDRESS
 def get_mac_address():
@@ -41,7 +43,7 @@ def allow_cross_domain(method):
             rst = make_response(method(*args, **kwargs))
             return add_cross_headers(rst)
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             return jsonify({'code': ED.err_sys})
 
     return _decorator
@@ -140,7 +142,7 @@ def check_api_cost_time(method):
             # logger.debug(method.__name__ + " api cost time %f s" % (end - start))
             return ret
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             # return package_ret_data_from_server({'code': 99999})
             return {'code': 99999}
 
@@ -300,7 +302,7 @@ def package_json_request_data(method):
             ret = method(*args, **kwargs)
             return ret
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             return "%s package_json_request_data error" % str(request)
 
     return _decorator

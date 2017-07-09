@@ -19,14 +19,14 @@ class ZuiwanDBManager():
     def __init__(self):
         self.logger = LogCenter.instance().get_logger('ZuiwanCenterLog')
         self.db_model = DBModelFactory.instance().get_db_model()
-        self.db_model_read = DBModelFactory.instance().get_db_model(readonly=True)
+        # self.db_model_read = DBModelFactory.instance().get_db_model(readonly=True)
 
         # self.table_name_user = self.conf.get('RDS', 'table_name_zuiwan_user')
         # self.table_name_user_count = self.conf.getint('RDS', 'table_name_zuiwan_user_count')
         # self.table_name_user_keys = json.loads(self.conf.get('RDS', 'table_name_zuiwan_user_keys'))
         self.table_name_user = "zuiwan_user"
         self.table_name_user_count = 1
-        self.table_name_user_keys = ('zuser_id', 'nick_name', 'email', 'create_time', 'avatar_url', 'credits','role','psw')
+        self.table_name_user_keys = ('zuser_id', 'nick_name', 'email', 'create_time', 'avatar_url', 'credits','role','psw','real_name','sex')
 
         self.table_name_meeting = "zuiwan_meeting"
         self.table_name_meeting_count = 1
@@ -53,13 +53,13 @@ class ZuiwanDBManager():
     def find_user(self, data):
         '''
         query zuiwan_user info(without content by nick_name or zuser_id
-        :param data:
+        :param data: t = queryType, c = queryContent
         :return:
         '''
         limit_count = int(data.get('count', 3))
         select_sql = DBModel.sql_select(self.table_name_user,
                                         keys=self.table_name_user_keys,
-                                        where="`%s` like '%%%s%%'" % (data.get('queryType',''),data.get('queryContent','')),
+                                        where="`%s` like '%%%s%%'" % (data.get('t',''),data.get('c','')),
                                         limit='0,%d' % limit_count, order=[{'key': 'create_time', 'desc': True}])
         records = self.db_model.GetList(select_sql)
         return records
@@ -70,7 +70,7 @@ class ZuiwanDBManager():
         :return:
         '''
         result = {'code': ED.no_err}
-        if not 'zuser_id' in data or len(data.get('zuser_id') or '') <= 0:
+        if not 'zuser_id' in data or len(data.get('zuser_id','')) <= 0:
             data['zuser_id'] = get_now_time_str_ms().replace('.', '')  # like '1497257116332'
         if not 'create_time' in data or data.get('create_time',0) == 0:
             data['create_time'] = get_now_time_int()
