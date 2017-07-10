@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask
 from flask_gzip import Gzip
+import jinja2
 from werkzeug.routing import BaseConverter
 from flask_socketio import SocketIO
 from Libraries.DBModel import *
@@ -17,7 +18,6 @@ from Admin.Admin import Admin
 from Secret.Secret import Secret
 from Zuiwan.User import ZuiwanUser
 from Zuiwan.Wechat import ZuiwanWechat
-
 def configure_blueprints(app):
     app.secret_key = 'jikappj39822@$*hjj'
 
@@ -38,19 +38,35 @@ class RegexConverter(BaseConverter):
         self.regex = items[0]
 
 def create_app(debug=True):
-    app = Flask('HackGirlfriend')
+    template_folder = os.path.abspath('Applications/static/templates')
+    static_url_folder = os.path.abspath('Applications/static')
+    app = Flask('HackGirlfriend',static_url_path=static_url_folder,template_folder = template_folder)# 绝对路径！！！
+    # app = Flask('HackGirlfriend')
 
     app.url_map.converters['regex'] = RegexConverter
     app.debug = debug
     Gzip(app)  # 使用gzip对响应进行压缩
     configure_blueprints(app)
+
+
+    # my_loader = jinja2.ChoiceLoader([
+    #     app.jinja_loader,
+    #     jinja2.FileSystemLoader([template_folder]),
+    # ])
+    # app.jinja_loader = my_loader
+
+
     return app
 
 app = create_app()
 
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":
-    socketio = SocketIO()
-    socketio.init_app(app)
-    # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
-    socketio.run(app, debug=True, host="0.0.0.0",port=8098)
+    # socketio = SocketIO()
+    # socketio.init_app(app)
+    # # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
+    # socketio.run(app, debug=True, host="0.0.0.0",port=8098)
+
+    app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
+
+
