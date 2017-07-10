@@ -169,7 +169,7 @@ def thread_exist(tuin,ThreadList):
     for t in ThreadList:
         if t.isAlive():
             if t.tuin == tuin:
-                t.check_msg()
+                t.check()
                 return t
         else:
             ThreadList.remove(t)

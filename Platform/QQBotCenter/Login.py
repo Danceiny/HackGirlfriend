@@ -1,18 +1,16 @@
-# -*- coding: utf-8 -*-
-
+# -*- coding: utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 import re
 import random
 import json
 import os
-import sys
+
 import datetime
 import time
-import threading
-import logging
-import urllib
 from HttpClient import HttpClient
 import Utils as util
-from QMessage import QMessage
 from CONFIGS import *
 
 reload(sys)
@@ -36,7 +34,6 @@ class Login(HttpClient):
     def __init__(self, qq_number=0, params=None):
         print 'class Login init....'
         self.initTime = time.time()
-        # self.VPath = VPATH % util.convert_int_2_string_single(int(time.time()))  # QRCode保存路径
         self.VPath = params.get('VPATH',VPATH % str(int(time.time()))) # QRCode保存路径
         self.PSessionID = params.get('PSessionID', '')
         self.MaxTryTime = params.get('MaxTryTime', 5)
@@ -44,8 +41,16 @@ class Login(HttpClient):
         self.QR_AVALABLE = False
         self.AdminQQ = int(qq_number)
         self.preLogined = False
+    def getQRCodeUrl(self,Try=0):
+        if self.preLogined:
+            logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
+            self.QRSig = self.getCookie('qrsig')
+            logging.info('get QRSig : %s', self.QRSig)
+            return (VRCODE_DOWNLOAD_URL).format(self.APPID, random.randint(0, 9), random.randint(0, 9)),self.VPath
+        else:
+            self.preLogin()
 
-    def getQRCode(self,Try=0):
+    def downloadQRCode(self, Try=0):
         if self.preLogined:
             self.Download((VRCODE_DOWNLOAD_URL).format(self.APPID, random.randint(0, 9), random.randint(0, 9)),self.VPath)
             logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
@@ -56,6 +61,7 @@ class Login(HttpClient):
 
     def checkQRCode(self,Try=0,StartTime=None):
         if StartTime == None:StartTime = util.date_to_millis(datetime.datetime.utcnow())
+        ret = None
         while True:
             Try += 1
             login_html = self.Get((QQ_LOGIN_URL).format(util.getQRtoken(self.QRSig), self.APPID,
@@ -63,19 +69,20 @@ class Login(HttpClient):
                                                         self.MiBaoCss, self.JS_VERSION, self.SIGN),UI_PTLOGIN2_URL)
             logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try),login_html)
             ret = login_html.split("'")
-            logging.info(ret)
 
             if ret[1] == '66':
                 if os.path.exists(self.VPath):
                     self.QR_AVALABLE = True
-                    break
+                    continue
                 else:
-                    self.getQRCode(Try)
+                    self.QR_AVALABLE = False
+                    self.downloadQRCode(Try)
                     continue
             elif ret[1] == '65':
+                self.QR_AVALABLE = False
                 if os.path.exists(self.VPath) and self.DELETE_PIC:
                     os.remove(self.VPath)
-                    self.getQRCode()
+                self.downloadQRCode()
                 continue
             elif ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
                 self.QR_AVALABLE = False
@@ -83,6 +90,11 @@ class Login(HttpClient):
                 if os.path.exists(self.VPath) and self.DELETE_PIC:
                     os.remove(self.VPath)
                 break
+            elif ret[1] == '67':
+                continue
+            else:
+                logging.error("二维码验证错误！！！！")
+                exit(-1)
             time.sleep(5)
         logging.info('跳出登陆的True死循环')
         return ret
@@ -92,7 +104,7 @@ class Login(HttpClient):
         logging.critical("正在获取登陆页面")
         self.Get(WEB_QQ_URL)
         login_html = self.Get(UI_PTLOGIN2_URL, WEB_QQ_URL)
-        logging.info('get login_html : %s', login_html)
+        # logging.info('get login_html : %s', login_html)
 
         # 2. 获取appid
         logging.critical("正在获取appid")
@@ -130,8 +142,7 @@ class Login(HttpClient):
 
         if not self.QR_AVALABLE:
             logging.info('QR is not avalable, to download it...')
-            self.getQRCode()
-
+            self.downloadQRCode()
 
         ret = self.checkQRCode(StartTime)
         logging.critical('Finish Check QR code...')

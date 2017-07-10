@@ -7,6 +7,8 @@ from Libraries.Utils import get_now_time_str_ms
 HOST = "118.89.27.96" #主机地址 例如192.168.1.101
 PORT = 80 #端口
 
+HOST = '192.168.136.2'
+PORT = 8098
 TOTAL = 0 #总数
 SUCC = 0 #响应成功数
 FAIL = 0 #响应失败数
@@ -46,7 +48,8 @@ class RequestThread(threading.Thread):
             conn = httplib.HTTPConnection(HOST, PORT, False)
             if self.method == 'GET':
                 self.URI += self.post_data
-            conn.request(self.method, self.URI, self.post_data)
+                # print(''.join(('---------------------------------------------',self.URI,'-----------------------------')))
+            conn.request(self.method, self.URI, self.post_data,headers={"Content-Type":"application/json"})
             res = conn.getresponse()
             # print 'version:', res.version
             # print 'reason:', res.reason
@@ -137,7 +140,7 @@ def post_test(thread_count, post_data):
     print 'response mintime',MINTIME
     print 'great than 3 seconds:%d,percent:%0.2f'%(GT3,float(GT3)/TOTAL)
     print 'less than 3 seconds:%d,percent:%0.2f'%(LT3,float(LT3)/TOTAL)
-    print 'average time: %0.2f'%(TOTALTIME/SUCC)
+    if SUCC != 0:print 'average time: %0.2f'%(TOTALTIME/SUCC)
 
 def get_test(thread_count, post_data):
     global TOTAL
@@ -205,18 +208,18 @@ def singleTest():
 
 
 if __name__ == "__main__":
-    post_datas = ['{"action":"add","zuser_id":%s,"psw":"password","user_name":"http://tv.sohu.com/20130526/n377096321.shtml"}' % (get_now_time_str_ms().replace('.','')),
-                  '{"action":"update","zuser_id":%s,"psw":"password","nick_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.','')),
-                  '{"action":"add","zuser_id":%s,"psw":"password","user_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.','')),
-                  '{"action":"delete","zuser_id":%s,"psw":"password","nick_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.',''))]
+    post_datas = ['{"action":"add","zuser_id":"%s","psw":"password","user_name":"http://tv.sohu.com/20130526/n377096321.shtml"}' % (get_now_time_str_ms().replace('.','')),
+                  '{"action":"update","zuser_id":"%s","psw":"password","nick_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.','')),
+                  '{"action":"add","zuser_id":"%s","psw":"password","user_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.','')),
+                  '{"action":"delete","zuser_id":"%s","psw":"password","nick_name":"http://tv.sohu.com/20130526/n377096321.shtml"}'%(get_now_time_str_ms().replace('.',''))]
 
     get_params = ['/zuiwan/get-users-list','/zuiwan/get-user-detail?zuser_id=100']
 
-    # post_test(10, post_datas[0])
-    # post_test(20, post_datas[1])
-    # post_test(50, post_datas[2])
-    # post_test(10, post_datas[2])
-    # post_test(20, post_datas[2])
+    post_test(10, post_datas[0])
+    post_test(20, post_datas[1])
+    post_test(50, post_datas[2])
+    post_test(10, post_datas[2])
+    post_test(20, post_datas[2])
     get_test(50, get_params[0])
     get_test(20, get_params[1])
     get_test(50, get_params[0])

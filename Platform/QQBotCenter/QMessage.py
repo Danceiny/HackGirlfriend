@@ -1,17 +1,7 @@
-# -*- coding: utf-8 -*-
-import Utils as util
-
-import re
-import random
-import json
-import os
+# -*- coding: utf-8
 import sys
-import datetime
-import time
-import threading
-import logging
-import urllib
-from HttpClient import HttpClient
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 from QThread import *
 
@@ -93,6 +83,7 @@ class QMessage(threading.Thread):
                 # 信息分发
                 logging.critical('check_msg.retcode: %s',str(ret['retcode']))
                 if 'result' in ret:
+                    logging.info(ret)
                     self.msg_handler(ret['result'])
                 E = 0
                 continue
@@ -117,7 +108,6 @@ class QMessage(threading.Thread):
             logging.error(str(e))
             logging.critical("Check error occured, retrying.")
             return self.check_msg()
-
         return ret
 
     def send_msg(self,tuin, content, isSess, group_sig, service_type):
@@ -157,7 +147,7 @@ class QMessage(threading.Thread):
             msgType = msg['poll_type']
             # QQ私聊消息
             if msgType == 'message' or msgType == 'sess_message':  # 私聊 or 临时对话
-                txt = self.combine_msg(msg['value']['content'])
+                txt = self.get_msg_content(msg['value']['content'])
                 tuin = msg['value']['from_uin']
                 msg_id = msg['value']['msg_id']
 
@@ -203,13 +193,13 @@ class QMessage(threading.Thread):
 
             # 群消息
             if msgType == 'group_message' or msgType == 4:
-                txt = self.combine_msg(msg['value']['content'])
+                txt = self.get_msg_content(msg['value']['content'])
                 guin = msg['value']['from_uin']
                 gid = self.GroupCodeList[int(guin)]
                 tuin = msg['value']['send_uin']
                 seq = msg['value']['msg_id']
                 if str(guin) in self.GroupWatchList:
-                    g_exist = util.group_thread_exist(gid,self)
+                    g_exist = util.group_thread_exist(gid,self.GroupThreadList)
                     if g_exist:
                         g_exist.handle(tuin, txt, seq)
                     else:
@@ -227,7 +217,7 @@ class QMessage(threading.Thread):
                 raise Exception, msg['value']['reason']  # 抛出异常, 重新启动WebQQ, 需重新扫描QRCode来完成登陆
 
 
-    def combine_msg(self,content):
+    def get_msg_content(self, content):
         msgTXT = ""
         for part in content:
             # print type(part)
@@ -253,6 +243,6 @@ class QMessage(threading.Thread):
         logging.info(ret['result']['gnamelist'])
 
         for t in ret['result']['gnamelist']:
-            GroupNameList[str(t["name"])] = t["gid"]
+            GroupNameList[str(t["name"])] = int(t["gid"])
             GroupCodeList[int(t["gid"])] = int(t["code"])
         self.HttpClient_Ist.Get((BUDDY_URL).format(self.VFWebQQ, CLIENT_ID, self.PSessionID, util.get_ts()), REFERER_URL)

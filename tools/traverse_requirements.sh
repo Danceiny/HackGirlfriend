@@ -4,7 +4,7 @@ echo "build requirements.txt for pip."
 
 out_file=requirements.txt
 tmp_file=tmp.txt
-site_dir=/home/ubuntu/web2/HackGrilfriend
+site_dir=/home/ubuntu/web2/HackGirlfriend
 
 function scan_dir(){
         for file in `ls $1`
