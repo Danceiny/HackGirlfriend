@@ -11,7 +11,28 @@ import logging.config
 
 from logging.handlers import RotatingFileHandler
 
-output_log_basepath = '/var/log/HackGirlfriend/'
+
+import ConfigParser
+conf = ConfigParser.ConfigParser()
+conf_name = os.path.join('PackageData','logger.conf')
+conf_path = os.path.dirname(os.path.dirname(__file__))
+conf.read(os.path.join(conf_path,conf_name))
+import platform
+plat = platform.platform().lower()
+home_key = 'HOME'
+if 'windows' in plat:  # windows
+    plat = "win"
+    home_key = 'HOMEPATH'
+elif 'darwin' in plat:
+    plat = 'mac'
+elif 'linux' in plat:
+    plat = 'linux'
+output_log_basepath = conf.get(plat,'output_log_basepath')
+if conf.getboolean(plat,'log_at_home'):
+    # 日志目录在家目录而不是/var/log等
+    home_dir = os.environ[home_key]
+    output_log_basepath = ''.join((home_dir,os.sep)) if not home_dir.endswith(os.sep) else home_dir
+
 global_loggers = None
 
 

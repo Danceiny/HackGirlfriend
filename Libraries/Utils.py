@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -19,6 +18,8 @@ import pytz
 import uuid
 import traceback
 import os
+from urllib2 import urlopen
+from urllib2 import HTTPError
 from Platform.LogCenter.LogCenter import LogCenter
 logger = LogCenter.instance().get_logger('UtilsLog')
 
@@ -44,7 +45,13 @@ def concat_dirs(is_abs=False,*dirs):
 def get_mac_address():
     mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
     return ":".join([mac[e:e + 2] for e in range(0, 11, 2)])
-
+def getCountryCode(ipAddress):
+    try:
+        response = urlopen("http://freegeoip.net/json/"+ipAddress).read().decode('utf-8')
+    except HTTPError:
+        return None
+    responseJson = json.loads(response)
+    return responseJson.get("country_code")
 
 def add_cross_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'

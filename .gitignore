@@ -40,3 +40,4 @@ logs
 celerybeat-schedule.db
 .env
 test.py
+*.ipynb
