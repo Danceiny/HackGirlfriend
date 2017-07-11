@@ -30,3 +30,12 @@ downloads/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# WeiboSpider
+# Created by .ignore support plugin (hsz.mobi)
+test.py
+.idea
+__pycache__/
+logs
+celerybeat-schedule.db
+.env
