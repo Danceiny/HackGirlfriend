@@ -9,21 +9,36 @@ from flask import request, make_response, jsonify
 from functools import wraps
 import platform
 if 'Win' not in platform.platform():
-    from MyCrypto import *
-import Platform.ErrorDefine as ED
-import hashlib
-import md5
+    pass
+import Libraries.ErrorDefine as ED
 import datetime
 import time
-import traceback
-import urlparse
 import json
-import urllib2
 import re
-import random
 import pytz
 import uuid
-from PackageData.PackageNormalData import *
+import traceback
+import os
+from Platform.LogCenter.LogCenter import LogCenter
+logger = LogCenter.instance().get_logger('UtilsLog')
+
+
+##################     文件相关      ##################
+def concat_dirs(is_abs=False,*dirs):
+    '''
+    将多级目录连接起来，os.path.join()的迭代版本
+    :param dirs:
+    :return:
+    '''
+    joined_path = ''
+    for dir in dirs:
+        joined_path = os.path.join(joined_path,dir)
+    if joined_path.endswith(('/','\\')):
+        joined_path = joined_path[:-1]
+    return os.path.abspath(joined_path) if is_abs else joined_path
+##################     文件相关      ##################
+
+
 
 # MAC ADDRESS
 def get_mac_address():
@@ -47,7 +62,7 @@ def allow_cross_domain(method):
             rst = make_response(method(*args, **kwargs))
             return add_cross_headers(rst)
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             return jsonify({'code': ED.err_sys})
 
     return _decorator
@@ -146,7 +161,7 @@ def check_api_cost_time(method):
             # logger.debug(method.__name__ + " api cost time %f s" % (end - start))
             return ret
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             # return package_ret_data_from_server({'code': 99999})
             return {'code': 99999}
 
@@ -306,7 +321,7 @@ def package_json_request_data(method):
             ret = method(*args, **kwargs)
             return ret
         except Exception, e:
-            # logger.error(repr(traceback.format_exc()))
+            logger.error(repr(traceback.format_exc()))
             return "%s package_json_request_data error" % str(request)
 
     return _decorator

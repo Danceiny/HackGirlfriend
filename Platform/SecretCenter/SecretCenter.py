@@ -8,7 +8,7 @@ from Libraries.Singleton.Singleton import Singleton
 
 #from SecretDBManager import SecretDBManager
 from Platform.LogCenter.LogCenter import LogCenter
-import Platform.ErrorDefine as ED
+
 
 @Singleton
 class SecretCenter(object):

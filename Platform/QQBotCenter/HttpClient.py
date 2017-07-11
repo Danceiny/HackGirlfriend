@@ -1,4 +1,8 @@
 # HttpClient.py is written by [xqin]: https://github.com/xqin/SmartQQ-for-Raspberry-Pi
+# -*- coding: utf-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 import cookielib, urllib, urllib2
 
 class HttpClient:

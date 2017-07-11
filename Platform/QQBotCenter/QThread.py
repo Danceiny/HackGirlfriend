@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 import re
 import random
 import json
 import os
-import sys
+
 import datetime
 import time
 import threading
@@ -17,8 +19,6 @@ from CONFIGS import *
 
 
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 
 class PmchatThread(threading.Thread):
@@ -104,7 +104,7 @@ class GroupThread(threading.Thread):
         self.gid = gcode
         self.load()
         self.lastreplytime=0
-        ret = self.HttpClient_Ist.Get((GET_GROUP_INFO_URL).format(gcode, self.QMsg_Ist.VFWebQQ, util.get_ts()), self.QMsg_Ist.Referer)
+        ret = self.HttpClient_Ist.Get((GET_GROUP_INFO_URL).format(gcode, self.QMsg_Ist.VFWebQQ, util.get_ts()), REFERER_URL)
         ret = json.loads(ret)
         for t in ret['result']['minfo']:
             self.NickList[str(t["nick"])]=int(t["uin"])
@@ -135,10 +135,10 @@ class GroupThread(threading.Thread):
             logging.info("REPLY TOO FAST, ABANDON："+content)
             return False
         self.lastreplytime = time.time()
-        reqURL = "https://d1.web2.own_qq_number.com/channel/send_qun_msg2"
+        reqURL = QQ_GROUP_REPLY_URL
         data = (
-            ('r', '{{"group_uin":{0}, "face":564,"content":"[\\"{4}\\",[\\"font\\",{{\\"name\\":\\"Arial\\",\\"size\\":\\"10\\",\\"style\\":[0,0,0],\\"color\\":\\"000000\\"}}]]","clientid":{1},"msg_id":{2},"psessionid":"{3}"}}'.format(self.guin, self.QMsg_Ist.ClientID, self.QMsg_Ist.msgId, self.QMsg_Ist.PSessionID, util.CProcess(content))),
-            ('clientid', self.QMsg_Ist.ClientID),
+            ('r', '{{"group_uin":{0}, "face":564,"content":"[\\"{4}\\",[\\"font\\",{{\\"name\\":\\"Arial\\",\\"size\\":\\"10\\",\\"style\\":[0,0,0],\\"color\\":\\"000000\\"}}]]","clientid":{1},"msg_id":{2},"psessionid":"{3}"}}'.format(self.guin, CLIENT_ID, self.QMsg_Ist.msgId, self.QMsg_Ist.PSessionID, util.CProcess(content))),
+            ('clientid', CLIENT_ID),
             ('psessionid', self.QMsg_Ist.PSessionID)
         )
         logging.info("Reply package: " + str(data))
