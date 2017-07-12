@@ -36,6 +36,7 @@ class PmchatThread(threading.Thread):
         self.replystreak = 0
         self.QMsg_Ist = QMsg_Ist
         self.HttpClient_Ist = QMsg_Ist.HttpClient_Ist
+        self.open_bot = False
 
         logger.info("私聊线程生成，私聊对象UIN："+str(self.tuin))
 

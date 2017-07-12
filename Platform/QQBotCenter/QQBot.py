@@ -24,12 +24,9 @@ from CONFIGS import *
 def getQRCodeUrl(own_qq_number=0,HttpClient_Ist=None):
     try:
         cur_file_path = os.getcwd()
-        print 'cur_file_path',cur_file_path
-        print ('cur_file_path pp',os.path.dirname(os.path.dirname(cur_file_path)))
-        vpath = concat_dirs(os.path.dirname(os.path.dirname(cur_file_path)),'static','images','qrcode.png')
-
+        if not cur_file_path.endswith('Applications'):
+            cur_file_path = concat_dirs(cur_file_path,'Applications')
         vpath = concat_dirs(cur_file_path,'QQBot','static', 'images','qrcode.png')
-        print('vpath',vpath)
         params = {'DELETE_PIC': True, 'VPATH': VPATH if vpath == '' else vpath}
         qqLoginDelegate = Login(own_qq_number, params)
         qqLoginDelegate.preLogin()
