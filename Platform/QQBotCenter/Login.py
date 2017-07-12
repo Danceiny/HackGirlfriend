@@ -74,7 +74,6 @@ class Login(HttpClient):
                 url = (QQ_LOGIN_URL).format(util.getQRtoken(self.QRSig), self.APPID,
                                             util.date_to_millis(datetime.datetime.utcnow()) - StartTime,
                                             self.MiBaoCss, self.JS_VERSION, self.SIGN)
-                print('checkQRCode', url)
                 login_html = self.Get(url, UI_PTLOGIN2_URL)
                 logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try), login_html)
                 ret = login_html.split("'")

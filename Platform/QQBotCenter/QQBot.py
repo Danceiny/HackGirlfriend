@@ -21,12 +21,14 @@ from QMessage import QMessage
 from Login import Login
 from CONFIGS import *
 
-def getQRCodeUrl(own_qq_number=0):
-    HttpClient_Ist = HttpClient()
+def getQRCodeUrl(own_qq_number=0,HttpClient_Ist=None):
     try:
         cur_file_path = os.getcwd()
         print 'cur_file_path',cur_file_path
-        vpath = concat_dirs(cur_file_path, 'static', 'images','qrcode.png')
+        print ('cur_file_path pp',os.path.dirname(os.path.dirname(cur_file_path)))
+        vpath = concat_dirs(os.path.dirname(os.path.dirname(cur_file_path)),'static','images','qrcode.png')
+
+        vpath = concat_dirs(cur_file_path,'QQBot','static', 'images','qrcode.png')
         print('vpath',vpath)
         params = {'DELETE_PIC': True, 'VPATH': VPATH if vpath == '' else vpath}
         qqLoginDelegate = Login(own_qq_number, params)
@@ -45,7 +47,7 @@ def main(mode='local',**kwargs):
     HttpClient_Ist = HttpClient()
     if mode == 'api':
         # api mode
-        ret = getQRCodeUrl()
+        ret = getQRCodeUrl(HttpClient_Ist=HttpClient_Ist)
         loginWithDelegate(qqLoginDelegate=ret.get('delegate',None),HttpClient_Ist=HttpClient_Ist,params=ret.get('params',None))
     else:
         # local mode

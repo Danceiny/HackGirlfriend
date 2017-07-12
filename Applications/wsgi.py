@@ -40,6 +40,8 @@ class RegexConverter(BaseConverter):
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
     static_folder = os.path.abspath('Applications/static')
+    static_folder = ''
+    static_url_path = ''
 
     # 事实上，windows
     import platform
@@ -47,12 +49,12 @@ def create_app(debug=True):
         print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \
         relative path, usually "templates".')
     # 绝对路径！！！必须以/开头
-    app = Flask('HackGirlfriend',static_folder=static_folder,template_folder = template_folder)
+    app = Flask('HackGirlfriend',static_folder=static_folder,template_folder = template_folder,static_url_path=static_url_path)
     # app = Flask('HackGirlfriend')
 
     app.url_map.converters['regex'] = RegexConverter
     app.debug = debug
-    Gzip(app)  # 使用gzip对响应进行压缩
+    # Gzip(app)  # 使用gzip对响应进行压缩 压缩则不受理静态资源
     configure_blueprints(app)
 
     # my_loader = jinja2.ChoiceLoader([

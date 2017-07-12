@@ -13,7 +13,7 @@ from Libraries.Utils import *
 from Libraries.ErrorDefine import *
 
 # 实例化一个blueprint
-QQBot = Blueprint("QQBot", __name__,template_folder='templates')
+QQBot = Blueprint("QQBot", __name__,template_folder='templates',static_folder='static')
 
 from Platform.QQBotCenter.QQBotCenter import QQBotCenter
 
@@ -23,7 +23,6 @@ import threading
 import thread
 @QQBot.route('qqbot/oneclickstart',methods=['GET'],endpoint='oneclickstart')
 @check_api_cost_time
-# @package_json_request_data
 @allow_cross_domain
 def oneclickstart():
     result = {'code':ED.no_err}
@@ -31,16 +30,10 @@ def oneclickstart():
     # template = url_for('qrcode','/Applications/static/templates/QRCode.html')
     # thread.start_new_thread(qqBotCenter.oneclickstart,())
     # return send_from_directory('Applications/QQBot/templates','QRCode.html')
-    vpath = 'Applications/static/images/qrcode.png'
-
-    ret = qqBotCenter.getQRCodeUrl()
-    vpath_url = ret.get('url')
-    thread.start_new_thread(qqBotCenter.continueLogin,(ret,))
-    # return render_template('QRCode.html',img_qrcode=vpath_url)
-    return redirect(vpath_url)
-@QQBot.route('qqbot/login',methods = ['GET'],endpoint='loginPage')
-@check_api_cost_time
-def loginPage():
-    pass
-    # return 'hello world'
+    # ret = qqBotCenter.getQRCodeUrl()
+    # thread.start_new_thread(qqBotCenter.continueLogin,(ret,))
+    thread.start_new_thread(qqBotCenter.oneclickstart,())
+    vpath_url = url_for("static",filename="imaqrcode.png")
+    return render_template('QRCode.html',img_vrcode=vpath_url)
+    # return redirect(vpath_url)
 
