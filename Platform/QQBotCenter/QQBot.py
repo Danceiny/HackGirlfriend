@@ -42,13 +42,13 @@ def getQRCodeUrl(own_qq_number=0,HttpClient_Ist=None):
         os._exit(-11)
 
 def main(mode='local',**kwargs):
-    qqLoginDelegate = kwargs.get('delegate',None)
+    print('QQBotcenter.py onclickstart', kwargs.get('groups',[]))
     initTime = time.time()
     HttpClient_Ist = HttpClient()
     if mode == 'api':
         # api mode
         ret = getQRCodeUrl(HttpClient_Ist=HttpClient_Ist)
-        loginWithDelegate(qqLoginDelegate=ret.get('delegate',None),HttpClient_Ist=HttpClient_Ist,params=ret.get('params',None))
+        loginWithDelegate(qqLoginDelegate=ret.get('delegate',None),HttpClient_Ist=HttpClient_Ist,params=ret.get('params',None),groups=kwargs.get('groups',[]))
     else:
         # local mode
         try:
@@ -66,24 +66,27 @@ def main(mode='local',**kwargs):
             logging.critical(str(e))
             os._exit(1)
 
-def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None):
+def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None,groups=[]):
     if qqLoginDelegate != None:
         qqLoginDelegate.login()
         t_check = QMessage(HttpClient_Ist,qqLoginDelegate,params=params)
 
         t_check.setDaemon(True)
         t_check.start()
-        t_check.watch_group(t_check.GroupNameList, t_check.GroupCodeList)
 
+        # 把所有群加进t_check实例的GroupNameList，GroupCodeList列表中
+        t_check.watch_group()
+
+        groups_to_watch = params.get('groups',[])
         try:
-            with open(GROUP_FOLLOW_FILENAME,'r') as f:
-                for line in f:
-                    tmp = line.strip('\n').strip('\r')
-                    if str(tmp) in t_check.GroupNameList:
-                        t_check.GroupWatchList.append(str(t_check.GroupNameList[str(tmp)]))
-                        logging.info("关注:"+str(tmp))
-                    else:
-                        logging.error("无法找到群：" + str(tmp))
+            for group in groups:
+                tmp = group.strip('\n').strip('\r').strip()
+                if str(tmp) in t_check.GroupNameList:
+                    t_check.GroupWatchList.append(str(t_check.GroupNameList[str(tmp)]))
+                    logging.info("关注:"+str(tmp))
+
+                else:
+                    logging.error("无法找到群：" + str(tmp))
         except Exception, e:
             logging.error("读取组存档出错:"+str(e))
 

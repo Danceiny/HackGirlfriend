@@ -7,9 +7,6 @@ from QThread import *
 
 MSG_HANDLER_URL = 'http://d1.web2.own_qq_number.com/channel/get_c2cmsg_sig2?id={0}&to_uin={1}&clientid={2}&psessionid={3}&service_type={4}&t={5}'
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
 
 
 class QMessage(threading.Thread):
@@ -42,7 +39,11 @@ class QMessage(threading.Thread):
 
         self.ThreadList = []
         self.GroupThreadList = []
-        self.GroupWatchList = []
+        self.GroupWatchList = []    #str(guin)
+
+        # for t in ret['result']['gnamelist']:
+        #     self.GroupNameList[str(t["name"])] = int(t["gid"])
+        #     self.GroupCodeList[int(t["gid"])] = int(t["code"])
 
         self.GroupCodeList = {}
         self.GroupNameList = {}
@@ -57,7 +58,7 @@ class QMessage(threading.Thread):
             except:
                 E += 1
                 continue
-            logging.info(ret)
+            logger.info(ret)
 
             # 返回数据有误
             if ret == "":
@@ -81,19 +82,19 @@ class QMessage(threading.Thread):
 
             if ret['retcode'] == 0:
                 # 信息分发
-                logging.critical('check_msg.retcode: %s',str(ret['retcode']))
+                logger.debug('ZuiwanCenter.QMessage check_msg.retcode: %s' % str(ret['retcode']))
                 if 'result' in ret:
-                    logging.info(ret)
+                    logger.info(ret)
                     self.msg_handler(ret['result'])
                 E = 0
                 continue
             if ret['retcode'] == 103:
-                logging.critical('请登录w.q.com，并退出！')
+                logger.error('请登录w.q.com，并退出！')
             # Other retcode e.g.: 103
             E += 1
             self.HttpClient_Ist.Get(BUDDY_URL.format(self.VFWebQQ,CLIENT_ID,self.PSessionID,util.get_ts()), REFERER_URL)
 
-        logging.critical("轮询错误超过五次")
+        logger.error("轮询错误超过五次")
 
     # 向服务器查询新消息
     def check_msg(self):
@@ -101,12 +102,12 @@ class QMessage(threading.Thread):
         html = self.HttpClient_Ist.Post(CHECK_MSG_URL, {
             'r': '{{"ptwebqq":"{1}","clientid":{2},"psessionid":"{0}","key":""}}'.format(self.PSessionID, self.PTWebQQ, CLIENT_ID)
         }, HTTPS_REFERER_URL)
-        logging.info("Check html: " + str(html))
+        logger.info("Check html: " + str(html))
         try:
             ret = json.loads(html)
         except Exception as e:
-            logging.error(str(e))
-            logging.critical("Check error occured, retrying.")
+            logger.error(str(e))
+            logger.error("Check error occured, retrying.")
             return self.check_msg()
         return ret
 
@@ -123,7 +124,7 @@ class QMessage(threading.Thread):
             rsp = self.HttpClient_Ist.Post(reqURL, data, HTTPS_REFERER_URL)
             rspp = json.loads(rsp)
             if rspp['errCode'] != 0:
-                logging.error("reply pmchat error" + str(rspp['errCode']))
+                logger.error("reply pmchat error" + str(rspp['errCode']))
         else:
             reqURL = SEND_SESS_MSG_URL
             data = (
@@ -138,7 +139,7 @@ class QMessage(threading.Thread):
             rsp = self.HttpClient_Ist.Post(reqURL, data, HTTPS_REFERER_URL)
             rspp = json.loads(rsp)
             if rspp['errCode'] != 0:
-                logging.error("reply temp pmchat error" + str(rspp['errCode']))
+                logger.error("reply temp pmchat error" + str(rspp['errCode']))
 
         return rsp
 
@@ -166,7 +167,7 @@ class QMessage(threading.Thread):
                             myid = msg['value']['id']
                             info = json.loads(self.HttpClient_Ist.Get(
                                 MSG_HANDLER_URL.format(myid, tuin, CLIENT_ID, self.PSessionID, service_type, util.get_ts()), REFERER_URL))
-                            logging.info("Get group sig:" + str(info))
+                            logger.info("Get group sig:" + str(info))
                             if info['retcode'] != 0:
                                 raise ValueError, info
                             info = info['result']
@@ -178,7 +179,7 @@ class QMessage(threading.Thread):
                         self.ThreadList.append(tmpThread)
                         tmpThread.push(txt,msg_id)
                     except Exception, e:
-                        logging.info("error"+str(e))
+                        logger.info("error"+str(e))
 
                 # print "{0}:{1}".format(self.FriendList.get(tuin, 0), txt)
 
@@ -188,15 +189,19 @@ class QMessage(threading.Thread):
                 #         msgId += 1
 
                 # if txt[0:4] == 'exit':
-                #     logging.info(self.Get('http://d1.web2.qq.com/channel/logout2?ids=&clientid={0}&psessionid={1}'.format(self.CLIENT_ID, self.PSessionID), REFERER_URL))
+                #     logger.info(self.Get('http://d1.web2.qq.com/channel/logout2?ids=&clientid={0}&psessionid={1}'.format(self.CLIENT_ID, self.PSessionID), REFERER_URL))
                 #     exit(0)
 
             # 群消息
+            # {"result": [{"poll_type": "group_message", "value": {
+            #     "content": [["font", {"color": "000000", "name": "微软雅黑", "size": 10, "style": [0, 0, 0]}], " 这里修改了还不行"],
+            #     "from_uin": 2188322869, "group_code": 2188322869, "msg_id": 32905, "msg_type": 4,
+            #     "send_uin": 4171258001, "time": 1499835891, "to_uin": 491976401}}], "retcode": 0}
             if msgType == 'group_message' or msgType == 4:
                 txt = self.get_msg_content(msg['value']['content'])
-                guin = msg['value']['from_uin']
-                gid = self.GroupCodeList[int(guin)]
-                tuin = msg['value']['send_uin']
+                guin = msg['value']['from_uin'] #u'from_uin': 2188322869L
+                gid = self.GroupCodeList.get(int(guin)) #u'gid': 3253257675L
+                tuin = msg['value']['send_uin']#u'to_uin': 491976401
                 seq = msg['value']['msg_id']
                 if str(guin) in self.GroupWatchList:
                     g_exist = util.group_thread_exist(gid,self.GroupThreadList)
@@ -207,13 +212,13 @@ class QMessage(threading.Thread):
                         tmpThread.start()
                         self.GroupThreadList.append(tmpThread)
                         tmpThread.handle(tuin, txt, seq)
-                        logging.info("群线程已生成")
+                        logger.info("群线程已生成")
                 else:
-                    logging.info(str(gid) + "群有动态，但是没有被监控")
+                    logger.info(str(gid) + "群有动态，但是没有被监控")
 
             # QQ号在另一个地方登陆, 被挤下线
             if msgType == 'kick_message':
-                logging.error(msg['value']['reason'])
+                logger.error(msg['value']['reason'])
                 raise Exception, msg['value']['reason']  # 抛出异常, 重新启动WebQQ, 需重新扫描QRCode来完成登陆
 
 
@@ -230,7 +235,7 @@ class QMessage(threading.Thread):
 
         return msgTXT
 
-    def watch_group(self, GroupNameList, GroupCodeList):
+    def watch_group(self):
         self.msgId = int(random.uniform(20000, 50000))
         login_html = self.HttpClient_Ist.Post(QQ_GROUP_API_URL, {
             'r': '{{"vfwebqq":"{0}","hash":"{1}"}}'.format(str(self.VFWebQQ), util.gethash(str(self.MyUIN), str(self.PTWebQQ)))
@@ -239,10 +244,10 @@ class QMessage(threading.Thread):
 
         if ret['retcode'] != 0:
             raise ValueError, "retcode error when getting group list: retcode=" + str(ret['retcode'])
-        logging.info('Get Group Name List: ')
-        logging.info(ret['result']['gnamelist'])
+        logger.info('Get Group Name List: ')
+        logger.info(ret['result']['gnamelist'])
 
         for t in ret['result']['gnamelist']:
-            GroupNameList[str(t["name"])] = int(t["gid"])
-            GroupCodeList[int(t["gid"])] = int(t["code"])
+            self.GroupNameList[str(t["name"])] = int(t["gid"])
+            self.GroupCodeList[int(t["gid"])] = int(t["code"])  #gid = self.GroupCodeList[int(guin)]
         self.HttpClient_Ist.Get((BUDDY_URL).format(self.VFWebQQ, CLIENT_ID, self.PSessionID, util.get_ts()), REFERER_URL)

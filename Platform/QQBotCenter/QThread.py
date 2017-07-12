@@ -10,7 +10,6 @@ import os
 import datetime
 import time
 import threading
-import logging
 import urllib
 from HttpClient import HttpClient
 import Utils as util
@@ -38,7 +37,7 @@ class PmchatThread(threading.Thread):
         self.QMsg_Ist = QMsg_Ist
         self.HttpClient_Ist = QMsg_Ist.HttpClient_Ist
 
-        logging.info("私聊线程生成，私聊对象UIN："+str(self.tuin))
+        logger.info("私聊线程生成，私聊对象UIN："+str(self.tuin))
 
     def check(self):
         self.lastcheck = time.time()
@@ -51,7 +50,7 @@ class PmchatThread(threading.Thread):
 
     def reply(self, content):
         self.QMsg_Ist.send_msg(self.tuin, str(content), self.isSess, self.group_sig, self.service_type)
-        logging.info("Reply to " + str(self.tuin) + ":" + str(content))
+        logger.info("Reply to " + str(self.tuin) + ":" + str(content))
 
     def push(self, ipContent, seq):
         if seq == self.lastseq:
@@ -64,24 +63,24 @@ class PmchatThread(threading.Thread):
             return True
         try:
             self.replystreak = self.replystreak + 1
-            logging.info("PM get info from AI: "+ipContent)
+            logger.info("PM get info from AI: "+ipContent)
             paraf={ 'userid' : str(self.tuin), 'key' : TULING_KEY, 'info' : ipContent}
 
             info = self.HttpClient_Ist.Get('http://www.tuling123.com/openapi/api?'+urllib.urlencode(paraf))
-            logging.info("AI REPLY:"+str(info))
+            logger.info("AI REPLY:"+str(info))
             info = json.loads(info)
             if info["code"] in [40001, 40003, 40004]:
                 self.reply("我今天累了，不聊了")
-                logging.warning("Reach max AI call")
+                logger.warning("Reach max AI call")
             elif info["code"] in [40002, 40005, 40006, 40007]:
                 self.reply("我遇到了一点问题，请稍后@我")
-                logging.warning("PM AI return error, code:"+str(info["code"]))
+                logger.warning("PM AI return error, code:"+str(info["code"]))
             else:
                 rpy = str(info["text"]).replace('<主人>','你').replace('<br>',"\n")
                 self.reply(rpy)
             return True
         except Exception, e:
-            logging.error("ERROR:"+str(e))
+            logger.error("ERROR:"+str(e))
         return False
 
 
@@ -132,7 +131,7 @@ class GroupThread(threading.Thread):
 
     def reply(self, content):
         if time.time() - self.lastreplytime < 3.0:
-            logging.info("REPLY TOO FAST, ABANDON："+content)
+            logger.info("REPLY TOO FAST, ABANDON："+content)
             return False
         self.lastreplytime = time.time()
         reqURL = QQ_GROUP_REPLY_URL
@@ -141,16 +140,16 @@ class GroupThread(threading.Thread):
             ('clientid', CLIENT_ID),
             ('psessionid', self.QMsg_Ist.PSessionID)
         )
-        logging.info("Reply package: " + str(data))
+        logger.info("Reply package: " + str(data))
         rsp = self.HttpClient_Ist.Post(reqURL, data, HTTPS_REFERER_URL)
         try:
             rspp = json.loads(rsp)
             if rspp['errCode'] == 0:
-                logging.info("[Reply to group " + str(self.gid) + "]:" + str(content))
+                logger.info("[Reply to group " + str(self.gid) + "]:" + str(content))
                 return True
         except:
             pass
-        logging.error("[Fail to reply group " + str(self.gid)+ "]:" + str(rsp))
+        logger.error("[Fail to reply group " + str(self.gid)+ "]:" + str(rsp))
         return rsp
 
     def handle(self, send_uin, content, seq):
@@ -161,10 +160,10 @@ class GroupThread(threading.Thread):
             if match:
                 if match.group(1) == 'learn':
                     self.learn(str(match.group(2)).decode('UTF-8'), str(match.group(3)).decode('UTF-8'))
-                    logging.debug(self.replyList)
+                    logger.debug(self.replyList)
                 if match.group(1) == 'delete':
                     self.delete(str(match.group(2)).decode('UTF-8'), str(match.group(3)).decode('UTF-8'))
-                    logging.debug(self.replyList)
+                    logger.debug(self.replyList)
 
             else:
                 # if not self.follow(send_uin, content):
@@ -186,7 +185,7 @@ class GroupThread(threading.Thread):
                     return
 
         else:
-            logging.warning("message seq repeat detected.")
+            logger.warning("message seq repeat detected.")
         self.lastseq = seq
 
     def tucao(self, content):
@@ -194,7 +193,7 @@ class GroupThread(threading.Thread):
             if str(key) in content and self.replyList[key]:
                 rd = random.randint(0, len(self.replyList[key]) - 1)
                 self.reply(self.replyList[key][rd])
-                logging.info('Group Reply'+str(self.replyList[key][rd]))
+                logger.info('Group Reply'+str(self.replyList[key][rd]))
                 return True
         return False
 
@@ -202,7 +201,7 @@ class GroupThread(threading.Thread):
         if self.last1 == str(content) and content != '' and content != ' ':
             if self.repeatPicture or "[图片]" not in content:
                 self.reply(content)
-                logging.info("已复读：{" + str(content) + "}")
+                logger.info("已复读：{" + str(content) + "}")
                 return True
         self.last1 = content
 
@@ -244,7 +243,7 @@ class GroupThread(threading.Thread):
                 savefile.write(json.dumps(self.replyList))
                 savefile.close()
         except Exception, e:
-            logging.error("写存档出错："+str(e))
+            logger.error("写存档出错："+str(e))
     def load(self):
         try:
             with open("database."+str(self.gid)+".save", "r") as savefile:
@@ -253,31 +252,31 @@ class GroupThread(threading.Thread):
                     self.replyList = json.loads(saves)
                 savefile.close()
         except Exception, e:
-            logging.info("读取存档出错:"+str(e))
+            logger.info("读取存档出错:"+str(e))
 
     def callout(self, send_uin, content):
         pattern = re.compile(r'^(?:!|！)(ai) (.+)')
         match = pattern.match(content)
         try:
             if match:
-                logging.info("get info from AI: "+str(match.group(2)).decode('UTF-8'))
+                logger.info("get info from AI: "+str(match.group(2)).decode('UTF-8'))
                 usr = str(send_uin)
                 paraf={ 'userid' : usr+'g', 'key' : TULING_KEY, 'info' : str(match.group(2)).decode('UTF-8')}
 
                 info = self.HttpClient_Ist.Get(TULING_API_URL+urllib.urlencode(paraf))
-                logging.info("AI REPLY:"+str(info))
+                logger.info("AI REPLY:"+str(info))
                 info = json.loads(info)
                 if info["code"] in [40001, 40003, 40004]:
                     self.reply("我今天累了，不聊了")
-                    logging.warning("Reach max AI call")
+                    logger.warning("Reach max AI call")
                 elif info["code"] in [40002, 40005, 40006, 40007]:
                     self.reply("我遇到了一点问题，请稍后@我")
-                    logging.warning("AI return error, code:"+str(info["code"]))
+                    logger.warning("AI return error, code:"+str(info["code"]))
                 else:
                     self.reply(str(info["text"]).replace('<主人>','你').replace('<br>',"\n"))
                 return True
         except Exception, e:
-            logging.error("ERROR"+str(e))
+            logger.error("ERROR"+str(e))
         return False
 
     def aboutme(self, content):
@@ -285,12 +284,12 @@ class GroupThread(threading.Thread):
         match = pattern.match(content)
         try:
             if match:
-                logging.info("output about info")
+                logger.info("output about info")
                 info="小黄鸡 v3.9 Modified by Danceiny. See: http://blog.cannot.cc/"
                 self.reply(info)
                 return True
         except Exception, e:
-            logging.error("ERROR"+str(e))
+            logger.error("ERROR"+str(e))
         return False
 
     def deleteall(self, content):
@@ -298,12 +297,12 @@ class GroupThread(threading.Thread):
         match = pattern.match(content)
         try:
             if match:
-                logging.info("Delete all learned data for group:"+str(self.gid))
+                logger.info("Delete all learned data for group:"+str(self.gid))
                 info="已删除所有学习内容"
                 self.replyList.clear()
                 self.save()
                 self.reply(info)
                 return True
         except Exception, e:
-            logging.error("ERROR:"+str(e))
+            logger.error("ERROR:"+str(e))
         return False
