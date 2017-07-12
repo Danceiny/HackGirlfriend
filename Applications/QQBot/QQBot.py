@@ -20,7 +20,7 @@ from Platform.QQBotCenter.QQBotCenter import QQBotCenter,oneclickstart
 qqBotCenter = QQBotCenter.instance()
 import threading
 import thread
-@QQBot.route('qqbot/oneclickstart',methods=['GET'],endpoint='oneclickstart')
+@QQBot.route('QQBot/oneclickstart',methods=['GET'],endpoint='oneclickstart')
 @check_api_cost_time
 @allow_cross_domain
 def oneclickstart():
@@ -28,6 +28,7 @@ def oneclickstart():
         request.data = json.loads(request.data)
     else:
         temp_raw_data = request.args.items()
+        print 'temp_raw_data',temp_raw_data
         temp_raw_map = {}
         for temp_item in temp_raw_data:
             temp_raw_map[temp_item[0]] = temp_item[1]
@@ -37,19 +38,21 @@ def oneclickstart():
     if data != None:
         for k,v in data.items():
             print 'get params',k,v
-            groups.append(str(data[k].decode('ascii')))
+            groups.append(str(data[k].encode('utf8','ignore')))
     print 'groups',groups
     # {'delegate': qqLoginDelegate, 'params': params, 'url': url, 'httpclient': HttpClient_Ist}
     kwargs = qqBotCenter.getQRCodeUrl()
     kwargs['groups'] = groups
-    thread.start_new_thread(qqBotCenter.continueLogin,(kwargs,))
-
+    # thread.start_new_thread(qqBotCenter.continueLogin,(kwargs,))
+    t = threading.Thread(target=qqBotCenter.continueLogin, args=(kwargs,))
+    t.start()
+    t.join()
     # 多进程： windows上开不起来？？？
     # p = multiprocessing.Process(target=oneclickstart, args=())
     # p.start()
     # p.join()
 
-    vpath_url = url_for("static",filename="imaqrcode.png")
+    vpath_url = url_for("static",filename="images/img_qrcode.png")
     return render_template('QRCode.html',img_vrcode=vpath_url),200,{"Cache-Control": "no-cache, no-store, must-revalidate"}
     # return redirect(vpath_url)
 
