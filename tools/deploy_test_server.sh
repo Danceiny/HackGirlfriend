@@ -17,3 +17,9 @@ ssh -i /mnt/c/Developer/workspaces/密钥/for_danceiny ubuntu@118.89.27.96 '
 #sudo killall  -9 uwsgi
 #sudo service supervisor restart
 #sudo supervisorctl reload
+
+#没有加入缓存区
+#git checkout . && git clean -xdf
+# 有的修改以及加入暂存区的话,那么
+#git reset --hard
+#git clean -xdf
