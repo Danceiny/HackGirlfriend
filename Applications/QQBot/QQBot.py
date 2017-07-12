@@ -13,7 +13,7 @@ from Libraries.Utils import *
 from Libraries.ErrorDefine import *
 
 # 实例化一个blueprint
-QQBot = Blueprint("QQBot", __name__)
+QQBot = Blueprint("QQBot", __name__,template_folder='templates')
 
 from Platform.QQBotCenter.QQBotCenter import QQBotCenter
 
@@ -35,7 +35,13 @@ def oneclickstart():
     print vpath
     vpath = 'Applications/static/images/qrcode.png'
     vpath = url_for('static',filename='images/qrcode.png')
-    return render_template('QRCode.html',img_qrcode=vpath)
+
+    ret = qqBotCenter.getQRCodeUrl()
+    print('qqbotcenter.getQRcodeurl return value',ret,dir(ret))
+    vpath_url = ret.get('url')
+    print ('vpath_url',vpath_url)
+    thread.start_new_thread(qqBotCenter.continueLogin,(ret,))
+    return render_template('QRCode.html',img_qrcode=vpath_url)
 
 @QQBot.route('qqbot/login',methods = ['GET'],endpoint='loginPage')
 @check_api_cost_time

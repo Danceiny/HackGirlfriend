@@ -13,38 +13,59 @@ import threading
 import logging
 import urllib
 import inspect
+import traceback
 from HttpClient import HttpClient
 import Utils as util
-
+from Libraries.Utils import concat_dirs
 from QMessage import QMessage
 from Login import Login
 from CONFIGS import *
 
-def main():
-    initTime = time.time()
-    HttpClient_Ist = HttpClient()
-    own_qq_number = 0
-    qqLogin = None
-    params = {}
+def getQRCodeUrl(own_qq_number=0):
     try:
-        initTime,_ = util.pass_time(initTime)
-        cur_file_path = inspect.getfile(inspect.currentframe())
-        vpath = ''
-        if __name__ != '__main__':
-            home_dir = os.path.dirname(os.path.dirname(os.path.dirname(cur_file_path)))
-            vpath = os.path.join(os.path.join(os.path.join(os.path.join(home_dir,'Applications'),'static'),'images'),'qrcode.png')
-            print vpath
-        params = {'DELETE_PIC':True,'VPATH':VPATH if vpath == '' else vpath}
-        qqLogin = Login(own_qq_number,params)
-        qqLogin.login()
-
+        cur_file_path = os.getcwd()
+        print 'cur_file_path',cur_file_path
+        vpath = concat_dirs(cur_file_path, 'static', 'images','qrcode.png')
+        print('vpath',vpath)
+        params = {'DELETE_PIC': True, 'VPATH': VPATH if vpath == '' else vpath}
+        qqLoginDelegate = Login(own_qq_number, params)
+        url = qqLoginDelegate.getQRCodeUrl(Try=5)
+        print('qqbotcenter qqbot getqrcodeurl url',url)
+        return {'delegate':qqLoginDelegate,'params':params,'url':url}
     except Exception, e:
         logging.critical(str(e))
-        os._exit(1)
+        traceback.print_exc()
+        os._exit(-11)
 
-    if qqLogin != None:
-        t_check = QMessage(HttpClient_Ist,qqLogin,params=params)
+def main(mode='local',**kwargs):
+    qqLoginDelegate = kwargs.get('delegate',None)
+    initTime = time.time()
+    HttpClient_Ist = HttpClient()
+    if mode == 'api':
+        # api mode
+        ret = getQRCodeUrl()
+        loginWithDelegate(qqLoginDelegate=ret.get('delegate',None),HttpClient_Ist=HttpClient_Ist,params=ret.get('params',None))
+    else:
+        # local mode
+        try:
+            initTime,_ = util.pass_time(initTime)
+            cur_file_path = os.getcwd()
+            vpath = ''
+            if __name__ != '__main__':
+                home_dir = os.path.dirname(os.path.dirname(os.path.dirname(cur_file_path)))
+                vpath = os.path.join(os.path.join(os.path.join(os.path.join(home_dir,'Applications'),'static'),'images'),'qrcode.png')
+            params = {'DELETE_PIC':True,'VPATH':VPATH if vpath == '' else vpath}
+            qqLoginDelegate = Login(0,params)
+            qqLoginDelegate.login()
+            loginWithDelegate(qqLoginDelegate,HttpClient_Ist,params)
+        except Exception, e:
+            logging.critical(str(e))
+            os._exit(1)
 
+def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None):
+    if qqLoginDelegate != None:
+        qqLoginDelegate.login()
+        t_check = QMessage(HttpClient_Ist,qqLoginDelegate,params=params)
 
         t_check.setDaemon(True)
         t_check.start()

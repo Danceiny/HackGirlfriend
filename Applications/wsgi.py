@@ -39,13 +39,15 @@ class RegexConverter(BaseConverter):
 
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
-    static_url_folder = os.path.abspath('Applications/static')
+    static_folder = os.path.abspath('Applications/static')
+
+    # 事实上，windows
     import platform
     if 'windows' in platform.platform().lower():
-        template_folder = template_folder[2:].replace('\\','/')
-        static_url_folder = static_url_folder[2:].replace('\\','/')
+        print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \
+        relative path, usually "templates".')
     # 绝对路径！！！必须以/开头
-    app = Flask('HackGirlfriend',static_url_path=static_url_folder,template_folder = template_folder)
+    app = Flask('HackGirlfriend',static_folder=static_folder,template_folder = template_folder)
     # app = Flask('HackGirlfriend')
 
     app.url_map.converters['regex'] = RegexConverter

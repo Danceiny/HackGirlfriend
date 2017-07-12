@@ -4,7 +4,6 @@ cycler==0.10.0
 enum==0.4.6
 Flask==0.12.2
 Flask-gzip==0.1
-functools32==3.2.3.post2
 itsdangerous==0.24
 jieba==0.38
 Jinja2==2.9.6

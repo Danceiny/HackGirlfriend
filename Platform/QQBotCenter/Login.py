@@ -41,14 +41,17 @@ class Login(HttpClient):
         self.QR_AVALABLE = False
         self.AdminQQ = int(qq_number)
         self.preLogined = False
+
     def getQRCodeUrl(self,Try=0):
-        if self.preLogined:
-            logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
-            self.QRSig = self.getCookie('qrsig')
-            logging.info('get QRSig : %s', self.QRSig)
-            return (VRCODE_DOWNLOAD_URL).format(self.APPID, random.randint(0, 9), random.randint(0, 9)),self.VPath
-        else:
-            self.preLogin()
+        self.preLogin()
+        logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
+        url = VRCODE_DOWNLOAD_URL.format(self.APPID, random.randint(0, 9), random.randint(0, 9))
+        self.Download(url,self.VPath)
+        self.QRSig = self.getCookie('qrsig')
+        logging.info('get QRSig : %s', self.QRSig)
+        self.QR_AVALABLE = True
+        return url
+
 
     def downloadQRCode(self, Try=0):
         if self.preLogined:
@@ -56,6 +59,7 @@ class Login(HttpClient):
             logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
             self.QRSig = self.getCookie('qrsig')
             logging.info('get QRSig : %s', self.QRSig)
+            self.QR_AVALABLE = True
         else:
             self.preLogin()
 
@@ -69,7 +73,7 @@ class Login(HttpClient):
                                                         self.MiBaoCss, self.JS_VERSION, self.SIGN),UI_PTLOGIN2_URL)
             logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try),login_html)
             ret = login_html.split("'")
-
+            logging.critical('checkQRCode retvalue %d ',len(ret))
             if ret[1] == '66':
                 if os.path.exists(self.VPath):
                     self.QR_AVALABLE = True
@@ -143,8 +147,8 @@ class Login(HttpClient):
         if not self.QR_AVALABLE:
             logging.info('QR is not avalable, to download it...')
             self.downloadQRCode()
-
         ret = self.checkQRCode(StartTime)
+
         logging.critical('Finish Check QR code...')
         if ret[1] != '0':
             raise ValueError, "RetCode = " + ret['retcode']
