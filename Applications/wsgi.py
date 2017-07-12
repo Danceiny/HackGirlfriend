@@ -40,29 +40,23 @@ class RegexConverter(BaseConverter):
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
     static_folder = os.path.abspath('Applications/static')
-    static_folder = ''
-    static_url_path = ''
-
     # 事实上，windows
     import platform
     if 'windows' in platform.platform().lower():
         print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \
         relative path, usually "templates".')
     # 绝对路径！！！必须以/开头
-    app = Flask('HackGirlfriend',static_folder=static_folder,template_folder = template_folder,static_url_path=static_url_path)
+    app = Flask('HackGirlfriend',static_folder=static_folder,template_folder = template_folder)
     # app = Flask('HackGirlfriend')
-
     app.url_map.converters['regex'] = RegexConverter
     app.debug = debug
     # Gzip(app)  # 使用gzip对响应进行压缩 压缩则不受理静态资源
     configure_blueprints(app)
-
     # my_loader = jinja2.ChoiceLoader([
     #     app.jinja_loader,
     #     jinja2.FileSystemLoader([template_folder]),
     # ])
     # app.jinja_loader = my_loader
-
     return app
 
 app = create_app()
@@ -73,7 +67,6 @@ if __name__ == "__main__":
     # socketio.init_app(app)
     # # app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
     # socketio.run(app, debug=True, host="0.0.0.0",port=8098)
-
     app.run(port=8098, debug=True, host="0.0.0.0")#host0000可从外网访问
 
 

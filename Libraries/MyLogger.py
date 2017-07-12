@@ -54,6 +54,9 @@ class MyLogger():
         global_loggers.warning(message)
         self.logger.warning(message)
 
+    def criticle(self, message):
+        global_loggers.critical(message)
+
     def error(self, message):
         global_loggers.error(message)
         self.logger.error(repr(traceback.format_exc()))
@@ -72,7 +75,7 @@ class MyLogger():
             "[%(asctime)s]: %(filename)s[line:%(lineno)d] [pid:%(process)d] %(levelname)s %(message)s")
         console.setFormatter(formatter)
         logger.addHandler(console)
-
+        # logging.basicConfig(filename=LOG_FILE_NAME, level=logging.DEBUG, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
         # 定义一个RotatingFileHandler，最多备份5个日志文件，每个日志文件最大5M
         Rthandler = RotatingFileHandler('%s/%s.log' % (dir_path, file), maxBytes=5 * 1024 * 1024, backupCount=10)
         Rthandler.setLevel(logging.DEBUG)

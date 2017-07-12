@@ -30,5 +30,8 @@ class QQBotCenter(object):
         # {'delegate': qqLoginDelegate, 'params': params, 'url': url, 'httpclient': HttpClient_Ist}
         return QQBot.getQRCodeUrl(HttpClient_Ist=HttpClient())
 
-    def continueLogin(self,kwargs):
-        QQBot.loginWithDelegate(qqLoginDelegate=kwargs.get('delegate',None),params=kwargs.get('params',None),HttpClient_Ist=kwargs.get('httpclient',HttpClient()),groups=kwargs.get('groups',[]))
+    def continueLogin(self,*args,**kwargs):
+        QQBot.loginWithDelegate(
+            *args,
+            **kwargs
+        )

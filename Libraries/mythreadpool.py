@@ -88,7 +88,8 @@ def test_threadpool():
             "http://wiki.python.org/moin/Documention"]
     pool_size = 2
     pool = threadpool.ThreadPool(
-        pool_size)  # 创建线程池，大小为 2 requests = threadpool.makrRequests(download_file, urls) # 创建工作请求 [pool.putRequest(req) for req in requests]
+        pool_size)  # 创建线程池，大小为 2
+    requests = threadpool.makrRequests(download_file, urls) # 创建工作请求 [pool.putRequest(req) for req in requests]
     print("putting request to pool")
     pool.putRequest(threadpool.WorkRequest(download_file, args=[
         "http://chrisarndt.de/proj ects/threadpool/api/", ]))  # 将具体的请求放入线程池 pool.putRequest(threadpool.WorkRequest(download_file, args=["https://pypi.python.org/p ypi/threadpool",]))

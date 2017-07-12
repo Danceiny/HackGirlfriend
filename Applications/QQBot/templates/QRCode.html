@@ -2,9 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    {#    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">#}
-    {#          <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>#}
-    {#    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>#}
+    <script src="{{ lazy_js_path }}" async=""></script>
     <script type="text/javascript" charset="utf-8">
         {#        $(document).ready(function () {#}
         {#        var socket = io.connect();#}
@@ -29,14 +27,15 @@
             background-color: #d397ff
         }
 
-        p,li {
+        p, li {
             text-align: center;
             margin-left: auto;
             margin-right: auto
         }
 
         img {
-            margin-top;30px;
+            margin-top;
+            30px;
             clear: both;
             display: block;
             margin: auto;
@@ -54,7 +53,8 @@
     <li>1. 若显示二维码已过期，请清除浏览器缓存；</li>
     <li>2. 若正常登陆无反应，请使用桌面电脑（非移动端）登陆<a href="http://w.qq.com/">SmartQQ官网</a> ,并在那里退出您的账号，即可访问本站点正常扫码登录~~~</li>
     <br>
-    <img src="static/images/qrcode.png"/>
+    <img src="{{ img }}"/>
+    <img data-src="{{ img_qrcode }}" src="{{ min_img }}" class="lazyload"/>
     <p class="middle">更多详情请访问<a href="http://blog.cannot.cc">弹簧振子的博客</a></p>
     <p class="middle">Powered By <a href="http://blog.cannot.cc">Danceiny</a></p>
 </div>

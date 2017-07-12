@@ -16,27 +16,29 @@ import inspect
 import traceback
 from HttpClient import HttpClient
 import Utils as util
-from Libraries.Utils import concat_dirs
+from Libraries.Utils import concat_dirs,get_now_time_str_ms
 from QMessage import QMessage
 from Login import Login
 from CONFIGS import *
-
+def deleteAllQRCode():
+    pass
 def getQRCodeUrl(own_qq_number=0,HttpClient_Ist=None):
     try:
         cur_file_path = os.getcwd()
         if not cur_file_path.endswith('Applications'):
             cur_file_path = concat_dirs(True,cur_file_path,'Applications')
-        vpath = concat_dirs(True,cur_file_path,'QQBot','static', 'images','qrcode.png')
-        params = {'DELETE_PIC': True, 'VPATH': VPATH if vpath == '' else vpath}
+        abs_vpath = concat_dirs(True,cur_file_path,'QQBot','static', 'images','{}.png'.format(get_now_time_str_ms().replace('.','')))
+        params = {'DELETE_PIC': True, 'VPATH': VPATH if abs_vpath == '' else abs_vpath}
         qqLoginDelegate = Login(own_qq_number, params)
         qqLoginDelegate.preLogin()
         url = qqLoginDelegate.getQRCodeUrl(Try=5)
         print('qqbotcenter qqbot getqrcodeurl url',url)
         return {'delegate':qqLoginDelegate,'params':params,'url':url,'httpclient':HttpClient_Ist}
     except Exception, e:
-        logging.critical(str(e))
+        logger.error(str(e))
         traceback.print_exc()
-        os._exit(-11)
+        deleteAllQRCode()
+        os._exit(-1)
 
 def main(mode='local',**kwargs):
     print('QQBotcenter.py onclickstart', kwargs.get('groups',[]))
@@ -63,30 +65,42 @@ def main(mode='local',**kwargs):
             logging.critical(str(e))
             os._exit(1)
 
-def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None,groups=None):
+def loginWithDelegate(*args,**kwargs):
+    qqLoginDelegate = None
+    HttpClient_Ist = None
+    loginParams = None
+    groups = args
+    for k, v in kwargs.items():
+        if 'qqLoginDelegate' == k:
+            qqLoginDelegate = v
+        elif 'HttpClient_Ist' == k:
+            HttpClient_Ist = v
+        elif 'loginParams' == k:
+            loginParams = v
+
     if qqLoginDelegate != None:
         qqLoginDelegate.login()
-        t_check = QMessage(HttpClient_Ist,qqLoginDelegate,params=params)
+        qMsg_Ist = QMessage(HttpClient_Ist,qqLoginDelegate,params=loginParams)
 
-        t_check.setDaemon(True)
-        t_check.start()
+        qMsg_Ist.setDaemon(True)
+        qMsg_Ist.start()
 
         # 把所有群加进t_check实例的GroupNameList，GroupCodeList列表中
-        t_check.watch_group()
+        qMsg_Ist.watch_group()
 
         try:
             for group in groups:
                 tmp = group.strip('\n').strip('\r').strip()
-                if str(tmp) in t_check.GroupNameList:
-                    t_check.GroupWatchList.append(str(t_check.GroupNameList[str(tmp)]))
+                if str(tmp) in qMsg_Ist.GroupNameList:
+                    qMsg_Ist.GroupWatchList.append(str(qMsg_Ist.GroupNameList[str(tmp)]))
                     logging.info("关注:"+str(tmp))
 
                 else:
                     logging.error("无法找到群：" + str(tmp))
         except Exception, e:
-            logging.error("读取组存档出错:"+str(e))
+            logger.error("读取组存档出错:"+str(e))
 
-        t_check.join()
+        qMsg_Ist.join()
 
 if __name__ == "__main__":
     main()
