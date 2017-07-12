@@ -1,17 +1,11 @@
 #!/bin/python
 # -*- coding: utf-8 -*-
-
-
 import struct
 import sys
 import binascii
 import pdb
-
-try:
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-except:
-    pass
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 # 搜狗的scel词库就是保存的文本的unicode编码，每两个字节一个字符（中文汉字或者英文字母）
 # 找出其每部分的偏移位置即可
@@ -36,10 +30,10 @@ except:
 #      {word_len,word,ext_len,ext} 一共重复same次 同音词 相同拼音表
 
 # 拼音表偏移，
-startPy = 0x1540;
+startPy = 0x1540
 
 # 汉语词组表偏移
-startChinese = 0x2628;
+startChinese = 0x2628
 
 # 全局拼音表
 
@@ -52,7 +46,7 @@ GTable = []
 
 def byte2str(data):
     '''''将原始字节码转为字符串'''
-    i = 0;
+    i = 0
     length = len(data)
     ret = u''
     while i < length:

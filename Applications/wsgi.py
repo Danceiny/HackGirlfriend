@@ -40,14 +40,18 @@ class RegexConverter(BaseConverter):
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
     static_url_folder = os.path.abspath('Applications/static')
-    app = Flask('HackGirlfriend',static_url_path=static_url_folder,template_folder = template_folder)# 绝对路径！！！
+    import platform
+    if 'windows' in platform.platform().lower():
+        template_folder = template_folder[2:].replace('\\','/')
+        static_url_folder = static_url_folder[2:].replace('\\','/')
+    # 绝对路径！！！必须以/开头
+    app = Flask('HackGirlfriend',static_url_path=static_url_folder,template_folder = template_folder)
     # app = Flask('HackGirlfriend')
 
     app.url_map.converters['regex'] = RegexConverter
     app.debug = debug
     Gzip(app)  # 使用gzip对响应进行压缩
     configure_blueprints(app)
-
 
     # my_loader = jinja2.ChoiceLoader([
     #     app.jinja_loader,

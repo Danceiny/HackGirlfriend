@@ -11,7 +11,7 @@ import logging.config
 
 from logging.handlers import RotatingFileHandler
 
-
+# determine output_log_basepath
 import ConfigParser
 conf = ConfigParser.ConfigParser()
 conf_name = os.path.join('PackageData','logger.conf')
@@ -31,7 +31,9 @@ output_log_basepath = conf.get(plat,'output_log_basepath')
 if conf.getboolean(plat,'log_at_home'):
     # 日志目录在家目录而不是/var/log等
     home_dir = os.environ[home_key]
-    output_log_basepath = ''.join((home_dir,os.sep)) if not home_dir.endswith(os.sep) else home_dir
+    project_name = os.path.basename(os.path.dirname(os.getcwd()))
+    t = os.path.join(home_dir,project_name)
+    output_log_basepath = ''.join((t,os.sep)) if not t.endswith(os.sep) else t
 
 global_loggers = None
 
