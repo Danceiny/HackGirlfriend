@@ -1,15 +1,14 @@
 # -*- coding: utf-8
 import sys
-import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
+import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把HackGirlfriend目录加载到$PYTHONPATH中
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask
 from flask_gzip import Gzip
 import jinja2
 from werkzeug.routing import BaseConverter
-from flask_socketio import SocketIO
 from Libraries.DBModel import *
 from Libraries.Utils import *
 from QQBot.QQBot import QQBot
@@ -18,6 +17,7 @@ from Admin.Admin import Admin
 from Secret.Secret import Secret
 from Zuiwan.User import ZuiwanUser
 from Zuiwan.Wechat import ZuiwanWechat
+
 def configure_blueprints(app):
     app.secret_key = 'jikappj39822@$*hjj'
 
@@ -62,7 +62,6 @@ def create_app(debug=True):
     #     jinja2.FileSystemLoader([template_folder]),
     # ])
     # app.jinja_loader = my_loader
-
 
     return app
 

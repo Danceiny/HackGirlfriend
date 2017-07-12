@@ -37,9 +37,12 @@ def oneclickstart():
     if data != None:
         for k,v in data.items():
             print 'get params',k,v
-            groups.append(str(data[k]))
+            groups.append(str(data[k].decode('ascii')))
     print 'groups',groups
-    thread.start_new_thread(qqBotCenter.oneclickstart,(groups,))
+    # {'delegate': qqLoginDelegate, 'params': params, 'url': url, 'httpclient': HttpClient_Ist}
+    kwargs = qqBotCenter.getQRCodeUrl()
+    kwargs['groups'] = groups
+    thread.start_new_thread(qqBotCenter.continueLogin,(kwargs,))
 
     # 多进程： windows上开不起来？？？
     # p = multiprocessing.Process(target=oneclickstart, args=())

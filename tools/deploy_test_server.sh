@@ -7,7 +7,7 @@ ssh -i /mnt/c/Developer/workspaces/密钥/for_danceiny ubuntu@118.89.27.96 '
     echo "-----------更新代码-----------"
     git pull
     echo "-----------重启uwsgi-----------"
-    sudo killall  -9 uwsgi
+    sudo killall -9 uwsgi
     sudo service supervisor restart
     echo "-----------重启uwsgi成功，结束-----------"
     exit
