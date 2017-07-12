@@ -78,6 +78,9 @@ class Login(HttpClient):
                 logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try), login_html)
                 ret = login_html.split("'")
                 logging.critical('checkQRCode retvalue %d ', len(ret))
+                if len(ret) < 2:
+                    time.sleep(2)
+                    continue
                 if ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
                     self.QR_AVALABLE = False
                     # 删除QRCode文件

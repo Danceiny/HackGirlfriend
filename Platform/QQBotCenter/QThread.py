@@ -64,21 +64,26 @@ class PmchatThread(threading.Thread):
         try:
             self.replystreak = self.replystreak + 1
             logger.info("PM get info from AI: "+ipContent)
-            paraf={ 'userid' : str(self.tuin), 'key' : TULING_KEY, 'info' : ipContent}
+            if(u"机器人" in ipContent):
+                self.open_bot = True
+            if(u"关掉吧" in ipContent):
+                self.open_bot = False
+            if self.open_bot:
+                paraf={ 'userid' : str(self.tuin), 'key' : TULING_KEY, 'info' : ipContent}
 
-            info = self.HttpClient_Ist.Get('http://www.tuling123.com/openapi/api?'+urllib.urlencode(paraf))
-            logger.info("AI REPLY:"+str(info))
-            info = json.loads(info)
-            if info["code"] in [40001, 40003, 40004]:
-                self.reply("我今天累了，不聊了")
-                logger.warning("Reach max AI call")
-            elif info["code"] in [40002, 40005, 40006, 40007]:
-                self.reply("我遇到了一点问题，请稍后@我")
-                logger.warning("PM AI return error, code:"+str(info["code"]))
-            else:
-                rpy = str(info["text"]).replace('<主人>','你').replace('<br>',"\n")
-                self.reply(rpy)
-            return True
+                info = self.HttpClient_Ist.Get('http://www.tuling123.com/openapi/api?'+urllib.urlencode(paraf))
+                logger.info("AI REPLY:"+str(info))
+                info = json.loads(info)
+                if info["code"] in [40001, 40003, 40004]:
+                    self.reply("我今天累了，不聊了")
+                    logger.warning("Reach max AI call")
+                elif info["code"] in [40002, 40005, 40006, 40007]:
+                    self.reply("我遇到了一点问题，请稍后@我")
+                    logger.warning("PM AI return error, code:"+str(info["code"]))
+                else:
+                    rpy = str(info["text"]).replace('<主人>','你').replace('<br>',"\n")
+                    self.reply(rpy)
+                return True
         except Exception, e:
             logger.error("ERROR:"+str(e))
         return False

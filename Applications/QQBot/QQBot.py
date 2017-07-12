@@ -44,9 +44,10 @@ def oneclickstart():
     kwargs = qqBotCenter.getQRCodeUrl()
     kwargs['groups'] = groups
     # thread.start_new_thread(qqBotCenter.continueLogin,(kwargs,))
+
     t = threading.Thread(target=qqBotCenter.continueLogin, args=(kwargs,))
-    t.start()
-    t.join()
+    t.setDaemon(True)
+    t.start()#不能join，join就堵塞了，无法返回
     # 多进程： windows上开不起来？？？
     # p = multiprocessing.Process(target=oneclickstart, args=())
     # p.start()

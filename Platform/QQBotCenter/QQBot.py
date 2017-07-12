@@ -66,7 +66,7 @@ def main(mode='local',**kwargs):
             logging.critical(str(e))
             os._exit(1)
 
-def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None,groups=[]):
+def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None,groups=None):
     if qqLoginDelegate != None:
         qqLoginDelegate.login()
         t_check = QMessage(HttpClient_Ist,qqLoginDelegate,params=params)
@@ -77,7 +77,6 @@ def loginWithDelegate(qqLoginDelegate=None,HttpClient_Ist=None,params=None,group
         # 把所有群加进t_check实例的GroupNameList，GroupCodeList列表中
         t_check.watch_group()
 
-        groups_to_watch = params.get('groups',[])
         try:
             for group in groups:
                 tmp = group.strip('\n').strip('\r').strip()
