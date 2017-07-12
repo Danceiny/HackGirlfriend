@@ -4,7 +4,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import trace
 # from PackageNormalData import *
-from flask import Blueprint, request, jsonify, redirect, template_rendered,g,render_template,send_from_directory,url_for
+from flask import Blueprint, request, jsonify, redirect, template_rendered,g,render_template,send_from_directory,url_for,current_app
 import requests
 import urllib
 import os
@@ -18,6 +18,9 @@ import threadpool
 
 from Libraries.Utils import *
 from Libraries.ErrorDefine import *
+
+from Platform.CeleryCenter import QQBot as qqbotCelery
+
 # 实例化一个blueprint
 QQBot = Blueprint("QQBot", __name__,template_folder='templates',static_folder='static',static_url_path='qqbot/static')
 from Libraries.mythreadpool import *
@@ -46,12 +49,14 @@ def oneclickstart():
             groups.append(v.decode('utf8','ignore'))
     print 'groups',groups
 
-    # wm = WorkerManager(2) # 创建线程池
-    # wm.add_job(qqBotCenter.getQRCodeUrl) # 将所有请求加入队列中
-    # wm.start()
-    # wm.wait_for_complete()
-    # kwargs = wm.get_result()
+    wm = WorkerManager(2) # 创建线程池
+    wm.add_job(qqBotCenter.getQRCodeUrl) # 将所有请求加入队列中
+    wm.start()
+    wm.wait_for_complete()
+    kwargs = wm.get_result()
 
+    # 10s 后开始执行异步任务
+    qqbotCelery.qqbot_bg.apply_async(args=[groups,kwargs], countdown=10)
     # wm.add_job(qqBotCenter.continueLogin,groups,kwargs)
     # wm.start()
     # t = threading.Thread(target=qqBotCenter.continueLogin, args=(groups,kwargs))
@@ -63,22 +68,22 @@ def oneclickstart():
     # p.start()
     # p.join()
 
-    kwargs = None
-    pool = multiprocessing.Pool()
-    result = Queue.Queue()
-
-    '''
-    将子进程对象存入队列中。
-    '''
-    q.put(pool.apply_async(qqBotCenter.getQRCodeUrl, args=()))  # 维持执行的进程总数为10，当一个进程执行完后添加新进程.
-    '''
-    因为这里使用的为pool.apply_async异步方法，因此子进程执行的过程中，父进程会执行while，获取返回值并校验。
-    '''
-    while True:
-        kwargs = result.get().get()
-        if kwargs:
-            pool.terminate()  # 结束进程池中的所有子进程。
-            break
+    # kwargs = None
+    # pool = multiprocessing.Pool()
+    # result = Queue.Queue()
+    #
+    # '''
+    # 将子进程对象存入队列中。
+    # '''
+    # q.put(pool.apply_async(qqBotCenter.getQRCodeUrl, args=()))  # 维持执行的进程总数为10，当一个进程执行完后添加新进程.
+    # '''
+    # 因为这里使用的为pool.apply_async异步方法，因此子进程执行的过程中，父进程会执行while，获取返回值并校验。
+    # '''
+    # while True:
+    #     kwargs = result.get().get()
+    #     if kwargs:
+    #         pool.terminate()  # 结束进程池中的所有子进程。
+    #         break
     lazy_js_path = url_for('static',filename='js/lazysizes.min.js')
     min_img = url_for('QQBot.static',filename='images/qrcode-min.png')
     img = url_for('QQBot.static',filename='/'.join(('images', os.path.basename(kwargs.get('url')))))

@@ -83,3 +83,4 @@ urlmap的索引（细节不赘述）。一般与url相同。
 
 # 有关Flask的一些精品文章
 - [在 Flask 里产生流式响应](https://blog.tonyseek.com/post/flask-stream-response/)
+- [](https://juejin.im/entry/5821856abf22ec0068e2595a)
