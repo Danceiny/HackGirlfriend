@@ -80,3 +80,6 @@ urlmap的索引（细节不赘述）。一般与url相同。
 
 # Nginx反向代理的新坑
 - [Flask的url_for重定向问题和相应源码分析](https://jiayi.space/post/flaskde-url_forzhong-ding-xiang-wen-ti-he-xiang-ying-yuan-ma-fen-xi)
+
+# 有关Flask的一些精品文章
+- [在 Flask 里产生流式响应](https://blog.tonyseek.com/post/flask-stream-response/)
