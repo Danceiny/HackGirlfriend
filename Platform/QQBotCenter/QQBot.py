@@ -22,6 +22,7 @@ from Login import Login
 from CONFIGS import *
 
 def getQRCodeUrl(own_qq_number=0):
+    HttpClient_Ist = HttpClient()
     try:
         cur_file_path = os.getcwd()
         print 'cur_file_path',cur_file_path
@@ -29,9 +30,10 @@ def getQRCodeUrl(own_qq_number=0):
         print('vpath',vpath)
         params = {'DELETE_PIC': True, 'VPATH': VPATH if vpath == '' else vpath}
         qqLoginDelegate = Login(own_qq_number, params)
+        qqLoginDelegate.preLogin()
         url = qqLoginDelegate.getQRCodeUrl(Try=5)
         print('qqbotcenter qqbot getqrcodeurl url',url)
-        return {'delegate':qqLoginDelegate,'params':params,'url':url}
+        return {'delegate':qqLoginDelegate,'params':params,'url':url,'httpclient':HttpClient_Ist}
     except Exception, e:
         logging.critical(str(e))
         traceback.print_exc()

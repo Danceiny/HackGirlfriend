@@ -31,18 +31,13 @@ def oneclickstart():
     # template = url_for('qrcode','/Applications/static/templates/QRCode.html')
     # thread.start_new_thread(qqBotCenter.oneclickstart,())
     # return send_from_directory('Applications/QQBot/templates','QRCode.html')
-    vpath = os.path.abspath('Applications/static/images/qrcode.png')
-    print vpath
     vpath = 'Applications/static/images/qrcode.png'
-    vpath = url_for('static',filename='images/qrcode.png')
 
     ret = qqBotCenter.getQRCodeUrl()
-    print('qqbotcenter.getQRcodeurl return value',ret,dir(ret))
     vpath_url = ret.get('url')
-    print ('vpath_url',vpath_url)
     thread.start_new_thread(qqBotCenter.continueLogin,(ret,))
-    return render_template('QRCode.html',img_qrcode=vpath_url)
-
+    # return render_template('QRCode.html',img_qrcode=vpath_url)
+    return redirect(vpath_url)
 @QQBot.route('qqbot/login',methods = ['GET'],endpoint='loginPage')
 @check_api_cost_time
 def loginPage():

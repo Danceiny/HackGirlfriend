@@ -43,11 +43,11 @@ class Login(HttpClient):
         self.preLogined = False
 
     def getQRCodeUrl(self,Try=0):
-        self.preLogin()
         logging.info('[{0}] Get QRCode Picture Success.'.format(Try))
         url = VRCODE_DOWNLOAD_URL.format(self.APPID, random.randint(0, 9), random.randint(0, 9))
         self.Download(url,self.VPath)
         self.QRSig = self.getCookie('qrsig')
+        print 'getQRCodeUrl',self.QRSig
         logging.info('get QRSig : %s', self.QRSig)
         self.QR_AVALABLE = True
         return url
@@ -68,76 +68,39 @@ class Login(HttpClient):
         ret = None
         while True:
             Try += 1
-            login_html = self.Get((QQ_LOGIN_URL).format(util.getQRtoken(self.QRSig), self.APPID,
-                                                        util.date_to_millis(datetime.datetime.utcnow()) - StartTime,
-                                                        self.MiBaoCss, self.JS_VERSION, self.SIGN),UI_PTLOGIN2_URL)
-            logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try),login_html)
-            ret = login_html.split("'")
-            logging.critical('checkQRCode retvalue %d ',len(ret))
-            if ret[1] == '66':
-                if os.path.exists(self.VPath):
-                    self.QR_AVALABLE = True
-                    continue
-                else:
+            if not self.QR_AVALABLE:
+                self.getQRCodeUrl(Try=Try)
+            while True:
+                url = (QQ_LOGIN_URL).format(util.getQRtoken(self.QRSig), self.APPID,
+                                            util.date_to_millis(datetime.datetime.utcnow()) - StartTime,
+                                            self.MiBaoCss, self.JS_VERSION, self.SIGN)
+                print('checkQRCode', url)
+                login_html = self.Get(url, UI_PTLOGIN2_URL)
+                logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try), login_html)
+                ret = login_html.split("'")
+                logging.critical('checkQRCode retvalue %d ', len(ret))
+                if ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
                     self.QR_AVALABLE = False
-                    self.downloadQRCode(Try)
+                    # 删除QRCode文件
+                    if os.path.exists(self.VPath) and self.DELETE_PIC:
+                        os.remove(self.VPath)
+                    break
+                elif ret[1] == '65':
+                    self.QR_AVALABLE = False
+                    if os.path.exists(self.VPath) and self.DELETE_PIC:
+                        os.remove(self.VPath)
+                    time.sleep(2)
+                    self.downloadQRCode()
                     continue
-            elif ret[1] == '65':
-                self.QR_AVALABLE = False
-                if os.path.exists(self.VPath) and self.DELETE_PIC:
-                    os.remove(self.VPath)
-                self.downloadQRCode()
-                continue
-            elif ret[1] == '0':  # 65: QRCode 失效, 0: 验证成功, 66: 未失效, 67: 验证中
-                self.QR_AVALABLE = False
-                # 删除QRCode文件
-                if os.path.exists(self.VPath) and self.DELETE_PIC:
-                    os.remove(self.VPath)
+
+                elif ret[1] == '67':
+                    time.sleep(2)
+                    continue
+                time.sleep(2)
+            if ret[1] == '0' or Try > self.MaxTryTime:
                 break
-            elif ret[1] == '67':
-                continue
-            else:
-                logging.error("二维码验证错误！！！！")
-                exit(-1)
-            time.sleep(5)
         logging.info('跳出登陆的True死循环')
         return ret
-
-    def preLogin(self):
-        # 1. 获取登录页面
-        logging.critical("正在获取登陆页面")
-        self.Get(WEB_QQ_URL)
-        login_html = self.Get(UI_PTLOGIN2_URL, WEB_QQ_URL)
-        # logging.info('get login_html : %s', login_html)
-
-        # 2. 获取appid
-        logging.critical("正在获取appid")
-        self.APPID = getReValue(login_html, r'<input type="hidden" name="aid" value="(\d+)" />', 'Get AppId Error', 1)
-        logging.info('get appid : %s', self.APPID)
-
-        # 3. 获取登录证书 sign
-        logging.critical("正在获取login_sig")
-        self.SIGN = getReValue(login_html, r'g_login_sig\s*=\s*encodeURIComponent\s*\("(.*?)"\)',
-                               'Get Login Sign Error', 0)
-
-        logging.info('get sign : %s', self.SIGN)
-
-        # 4. 获取js版本
-        logging.critical("正在获取pt_version")
-        self.JS_VERSION = getReValue(login_html, r'g_pt_version\s*=\s*encodeURIComponent\s*\("(\d+)"\)',
-                                     'Get g_pt_version Error', 1)
-
-        logging.info('get g_pt_version : %s', self.JS_VERSION)
-
-        # 5. 获取css
-        logging.critical("正在获取mibao_css")
-
-        self.MiBaoCss = getReValue(login_html, r'g_mibao_css\s*=\s*encodeURIComponent\s*\("(.*?)"\)',
-                                   'Get g_mibao_css Error', 1)
-        logging.info('get g_mibao_css : %s', self.MiBaoCss)
-
-        self.preLogined = True
-
 
     def scanQR(self):
         # 6. 扫码
@@ -160,7 +123,6 @@ class Login(HttpClient):
         if os.path.exists(self.VPath) and self.DELETE_PIC:
             os.remove(self.VPath)
         return ret
-
 
     def login(self):
         if not self.preLogined: self.preLogin()
@@ -236,3 +198,38 @@ class Login(HttpClient):
         logging.critical("QQ号：{0} 登陆成功, 用户名：{1}".format(ret['result']['uin'], self.tmpUserName))
         logging.info('Login success')
         logging.critical("登陆二维码用时" + util.pass_time(self.initTime)[1] + "秒")
+    def preLogin(self):
+        # 1. 获取登录页面
+        logging.critical("正在获取登陆页面")
+        self.Get(WEB_QQ_URL)
+        login_html = self.Get(UI_PTLOGIN2_URL, WEB_QQ_URL)
+        # logging.info('get login_html : %s', login_html)
+
+        # 2. 获取appid
+        logging.critical("正在获取appid")
+        self.APPID = getReValue(login_html, r'<input type="hidden" name="aid" value="(\d+)" />', 'Get AppId Error', 1)
+        logging.info('get appid : %s', self.APPID)
+
+        # 3. 获取登录证书 sign
+        logging.critical("正在获取login_sig")
+        self.SIGN = getReValue(login_html, r'g_login_sig\s*=\s*encodeURIComponent\s*\("(.*?)"\)',
+                               'Get Login Sign Error', 0)
+
+        logging.info('get sign : %s', self.SIGN)
+
+        # 4. 获取js版本
+        logging.critical("正在获取pt_version")
+        self.JS_VERSION = getReValue(login_html, r'g_pt_version\s*=\s*encodeURIComponent\s*\("(\d+)"\)',
+                                     'Get g_pt_version Error', 1)
+
+        logging.info('get g_pt_version : %s', self.JS_VERSION)
+
+        # 5. 获取css
+        logging.critical("正在获取mibao_css")
+
+        self.MiBaoCss = getReValue(login_html, r'g_mibao_css\s*=\s*encodeURIComponent\s*\("(.*?)"\)',
+                                   'Get g_mibao_css Error', 1)
+        logging.info('get g_mibao_css : %s', self.MiBaoCss)
+
+        print "set preLogined = True'"
+        self.preLogined = True
