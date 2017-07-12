@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -12,7 +11,30 @@ import logging.config
 
 from logging.handlers import RotatingFileHandler
 
-output_log_basepath = '/var/log/HackGirlfriend/'
+# determine output_log_basepath
+import ConfigParser
+conf = ConfigParser.ConfigParser()
+conf_name = os.path.join('PackageData','logger.conf')
+conf_path = os.path.dirname(os.path.dirname(__file__))
+conf.read(os.path.join(conf_path,conf_name))
+import platform
+plat = platform.platform().lower()
+home_key = 'HOME'
+if 'windows' in plat:  # windows
+    plat = "win"
+    home_key = 'HOMEPATH'
+elif 'darwin' in plat:
+    plat = 'mac'
+elif 'linux' in plat:
+    plat = 'linux'
+output_log_basepath = conf.get(plat,'output_log_basepath')
+if conf.getboolean(plat,'log_at_home'):
+    # 日志目录在家目录而不是/var/log等
+    home_dir = os.environ[home_key]
+    project_name = os.path.basename(os.path.dirname(os.getcwd()))
+    t = os.path.join(home_dir,project_name)
+    output_log_basepath = ''.join((t,os.sep)) if not t.endswith(os.sep) else t
+
 global_loggers = None
 
 
@@ -32,6 +54,9 @@ class MyLogger():
         global_loggers.warning(message)
         self.logger.warning(message)
 
+    def criticle(self, message):
+        global_loggers.critical(message)
+
     def error(self, message):
         global_loggers.error(message)
         self.logger.error(repr(traceback.format_exc()))
@@ -50,7 +75,7 @@ class MyLogger():
             "[%(asctime)s]: %(filename)s[line:%(lineno)d] [pid:%(process)d] %(levelname)s %(message)s")
         console.setFormatter(formatter)
         logger.addHandler(console)
-
+        # logging.basicConfig(filename=LOG_FILE_NAME, level=logging.DEBUG, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
         # 定义一个RotatingFileHandler，最多备份5个日志文件，每个日志文件最大5M
         Rthandler = RotatingFileHandler('%s/%s.log' % (dir_path, file), maxBytes=5 * 1024 * 1024, backupCount=10)
         Rthandler.setLevel(logging.DEBUG)

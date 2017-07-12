@@ -1,37 +1,69 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
-          <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>d
+    <script src="{{ lazy_js_path }}" async=""></script>
     <script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-        var socket = io.connect();
-
-        socket.on('connect', function() {
-            socket.emit('connect_event', {data: 'connected!'});
-        })
-
-        socket.on('server_response', function(msg) {
-            $('#log').append('<br>' + $('<div/>').text('Received #' + ': ' + msg.data).html());
-        });
-
-        $('form#emit').submit(function(event) {
-                socket.emit('client_event', {data: $('#emit_data').val()});
-                return false;
-            });
-    });
+        {#        $(document).ready(function () {#}
+        {#        var socket = io.connect();#}
+        {##}
+        {#        socket.on('connect', function() {#}
+        {#            socket.emit('connect_event', {data: 'connected!'});#}
+        {#        })#}
+        {##}
+        {#        socket.on('server_response', function(msg) {#}
+        {#            $('#log').append('<br>' + $('<div/>').text('Received #' + ': ' + msg.data).html());#}
+        {#        });#}
+        {##}
+        {#        $('form#emit').submit(function(event) {#}
+        {#                socket.emit('client_event', {data: $('#emit_data').val()});#}
+        {#                return false;#}
+        {#            });#}
+        {#        });#}
 
     </script>
+    <style type="text/css">
+        body {
+            background-color: #d397ff
+        }
+
+        p, li {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        img {
+            margin-top;
+            30px;
+            clear: both;
+            display: block;
+            margin: auto;
+        }
+    </style>
     <title>QQ聊天机器人</title>
     <meta name="description" content="Commentbox">
-  </head>
-  <body>
-  <div id="login">
-      <img src="../img/erweima.login.png"/>
-  </div>
-    <div id="app"></div>
+</head>
+<body>
+<div id="login">
+    <p class="middle">打开手机QQ，扫码登录，你的QQ将变身机器人！</p>
+    <p class="middle">变身暗号：机器人</p>
+    <p>您的好友给你发送的消息中含有“机器人”三个字则自动开启聊天机器人功能，“关掉吧”则关闭该功能。</p>
+    <p>您将关注以下QQ群
+        {% for g in watch_group %}
+            <li>{{ g }}</li>
+        {% endfor %}
+    </p>
+    <p>如果未能正常工作，请按照以下步骤操作：</p>
+    <li>1. 若显示二维码已过期，请清除浏览器缓存；</li>
+    <li>2. 若正常登陆无反应，请使用桌面电脑（非移动端）登陆<a href="http://w.qq.com/">SmartQQ官网</a> ,并在那里退出您的账号，即可访问本站点正常扫码登录~~~</li>
+    <br>
+    <img src="{{ img }}"/>
+    <img data-src="{{ img_qrcode }}" src="{{ min_img }}" class="lazyload"/>
+    <p class="middle">更多详情请访问<a href="http://blog.cannot.cc">弹簧振子的博客</a></p>
+    <p class="middle">Powered By <a href="http://blog.cannot.cc">Danceiny</a></p>
+</div>
+<div id="app"></div>
 {#    <script src="${ url_for('static', filename='js/dist/index.bundle.js') }"></script>#}
-  </body>
+</body>
 </html>

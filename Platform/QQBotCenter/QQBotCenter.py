@@ -6,13 +6,32 @@ sys.setdefaultencoding("utf-8")
 from CONFIGS import *
 
 from Libraries.Singleton.Singleton import Singleton
+import QQBot
+from HttpClient import HttpClient
 
+
+def oneclickstart():
+    # 只有top module的函数才能序列化（多进程调用的target）
+    QQBot.main(mode='api')
 
 @Singleton
 class QQBotCenter(object):
+
+
     def __init__(self):
         pass
 
-    def oneclickstart(self):
-        import QQBot
-        QQBot.main()
+    def oneclickstart(self,groups):
+        print('QQBotcenter.py onclickstart',groups)
+        QQBot.main(mode='api',groups=groups)
+
+
+    def getQRCodeUrl(self):
+        # {'delegate': qqLoginDelegate, 'params': params, 'url': url, 'httpclient': HttpClient_Ist}
+        return QQBot.getQRCodeUrl(HttpClient_Ist=HttpClient())
+
+    def continueLogin(self,*args,**kwargs):
+        QQBot.loginWithDelegate(
+            *args,
+            **kwargs
+        )

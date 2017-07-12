@@ -3,7 +3,6 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import trace
-# from PackageNormalData import *
 from flask import Blueprint, request, jsonify, redirect, render_template
 import requests
 import urllib

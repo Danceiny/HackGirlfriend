@@ -11,7 +11,7 @@ zuiwanCenter = ZuiwanCenter.instance()
 ZuiwanUser = Blueprint("ZuiwanUser", __name__)
 # Description
 
-@ZuiwanUser.route('api/v1/zuiwan/user/modify', methods = ['POST','GET'], endpoint='modify-user')
+@ZuiwanUser.route('v1/zuiwan/user/modify', methods = ['POST','GET'], endpoint='modify-user')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data
@@ -32,7 +32,7 @@ def modify_user():
         result['code'] = ED.err_sys
     return json.dumps(result)
 
-@ZuiwanUser.route('api/v1/zuiwan/get-users-list', methods = ['GET'], endpoint='get-users-list')
+@ZuiwanUser.route('v1/zuiwan/get-users-list', methods = ['GET'], endpoint='get-users-list')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data
@@ -45,7 +45,7 @@ def get_users_list():
         result['code'] = ED.err_sys
     return json.dumps(result)
 
-@ZuiwanUser.route('api/v1/zuiwan/get-user-detail', methods = ['GET'], endpoint='get-user-detail')
+@ZuiwanUser.route('v1/zuiwan/get-user-detail', methods = ['GET'], endpoint='get-user-detail')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data
@@ -58,7 +58,7 @@ def get_user_detail():
         result['code'] = ED.err_sys
     return json.dumps(result)
 
-@ZuiwanUser.route('api/v1/zuiwan/find-user', methods = ['GET'], endpoint='find-user')
+@ZuiwanUser.route('v1/zuiwan/find-user', methods = ['GET'], endpoint='find-user')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data
@@ -72,7 +72,7 @@ def find_user():
     return json.dumps(result)
 
 
-@ZuiwanUser.route('api/v1/mysql-dbtest',methods=['GET'],endpoint='mysql-dbtest')
+@ZuiwanUser.route('v1/mysql-dbtest',methods=['GET'],endpoint='mysql-dbtest')
 @check_api_cost_time
 @allow_cross_domain
 @package_json_request_data

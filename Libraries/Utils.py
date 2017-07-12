@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -19,6 +18,8 @@ import pytz
 import uuid
 import traceback
 import os
+from urllib2 import urlopen
+from urllib2 import HTTPError
 from Platform.LogCenter.LogCenter import LogCenter
 logger = LogCenter.instance().get_logger('UtilsLog')
 
@@ -44,6 +45,20 @@ def concat_dirs(is_abs=False,*dirs):
 def get_mac_address():
     mac = uuid.UUID(int=uuid.getnode()).hex[-12:]
     return ":".join([mac[e:e + 2] for e in range(0, 11, 2)])
+def getCountryCode(ipAddress):
+    try:
+        response = urlopen("http://freegeoip.net/json/"+ipAddress).read().decode('utf-8')
+    except HTTPError:
+        return None
+    responseJson = json.loads(response)
+    return responseJson.get("country_code")
+def dotip2int(dotip):
+    # import socket,struct
+    # return socket.ntohl(struct.unpack("I",socket.inet_aton(str(ip)))[0]) 
+    return (lambda x:sum([256**j*int(i) for j,i in enumerate(x.split('.')[::-1])]))(dotip)
+
+def int2dotip(ip):
+    return (lambda x: '.'.join([str(x/(256**i)%256) for i in range(3,-1,-1)]))(ip)
 
 
 def add_cross_headers(response):
@@ -61,7 +76,7 @@ def allow_cross_domain(method):
         try:
             rst = make_response(method(*args, **kwargs))
             return add_cross_headers(rst)
-        except Exception, e:
+        except Exception,e:
             logger.error(repr(traceback.format_exc()))
             return jsonify({'code': ED.err_sys})
 

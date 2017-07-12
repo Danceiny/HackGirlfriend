@@ -2,9 +2,10 @@
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
 import logging
-LOG_FILE_NAME = 'qqbot.log'
-GROUP_FOLLOW_FILENAME = 'groupfollow.txt'
+
+
 CLIENT_ID = 53999199
 VPATH = 'v_%s.png'
 
@@ -42,4 +43,10 @@ GET_GROUP_INFO_URL = 'http://s.web2.qq.com/api/get_group_info_ext2?gcode={0}&vfw
 TULING_API_URL = 'http://www.tuling123.com/openapi/api?'
 TULING_KEY= '4fbe28a1ace8412b997a01498d7b2513'
 QQ_GROUP_REPLY_URL = "https://d1.web2.qq.com/channel/send_qun_msg2"
-logging.basicConfig(filename=LOG_FILE_NAME, level=logging.DEBUG, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+
+# LOG_FILE_NAME = 'qqbot.log'
+# logging.basicConfig(filename=LOG_FILE_NAME, level=logging.DEBUG, format='%(asctime)s  %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+
+
+from Platform.LogCenter.LogCenter import LogCenter
+logger= LogCenter.instance().get_logger('QQBotCenterLog')

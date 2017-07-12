@@ -23,6 +23,8 @@ nginx配置 uwsgi_pass, 可以是sock文件，可以是ip:port。
 
 uwsgi的配置文件socket=对应nginx的uwsgi_pass。
 
+需要安装uwsgi-plugin-python。
+
 uwsgi配置 uwsgi.ini:
 ```ini
 socket = 
@@ -34,6 +36,7 @@ plugin = python,http
 ### Common commands
 - ps -ef | grep nginx
 - service nginx start/reload/stop
+- sudo ln -s nginx_uwsgi.conf /etc/nginx/conf.d/
 
 
 ## TODO LIST
