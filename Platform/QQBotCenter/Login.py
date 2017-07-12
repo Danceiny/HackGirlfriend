@@ -77,7 +77,7 @@ class Login(HttpClient):
                 login_html = self.Get(url, UI_PTLOGIN2_URL)
                 logging.info('[{0}] Get QQ_LOGIN_URL html, %s'.format(Try), login_html)
                 ret = login_html.split("'")
-                logging.critical('checkQRCode retvalue %d ', len(ret))
+                logging.info('checkQRCode retvalue %d ', len(ret))
                 if len(ret) < 2:
                     time.sleep(2)
                     continue
