@@ -19,13 +19,12 @@ import threadpool
 from Libraries.Utils import *
 from Libraries.ErrorDefine import *
 
-from Platform.CeleryCenter import QQBot as qqbotCelery
-
 # 实例化一个blueprint
 QQBot = Blueprint("QQBot", __name__,template_folder='templates',static_folder='static',static_url_path='qqbot/static')
 from Libraries.mythreadpool import *
 from Platform.QQBotCenter.QQBotCenter import QQBotCenter,oneclickstart
 qqBotCenter = QQBotCenter.instance()
+from flask import current_app
 
 @QQBot.route('qqbot/one',methods=['GET'],endpoint='oneclickstart')
 @check_api_cost_time
@@ -41,7 +40,8 @@ def oneclickstart():
         request.data = temp_raw_map
     data = request.data
     groups = []
-    if data != None:
+    print data
+    if data != None and any(data):
         values = data.get('v')
         if isinstance(values,unicode):
             values = values.encode('utf-8')
@@ -53,8 +53,10 @@ def oneclickstart():
     wm.add_job(qqBotCenter.getQRCodeUrl) # 将所有请求加入队列中
     wm.start()
     wm.wait_for_complete()
+
     kwargs = wm.get_result()
 
+    from Platform.CeleryCenter import QQBot as qqbotCelery
     # 10s 后开始执行异步任务
     qqbotCelery.qqbot_bg.apply_async(args=[groups,kwargs], countdown=10)
     # wm.add_job(qqBotCenter.continueLogin,groups,kwargs)

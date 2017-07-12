@@ -5,7 +5,7 @@ sys.setdefaultencoding('utf-8')
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把HackGirlfriend目录加载到$PYTHONPATH中
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from flask import Flask
+from flask import Flask,current_app,ctx
 
 from werkzeug.routing import BaseConverter
 from Libraries.DBModel import *
@@ -62,6 +62,9 @@ def create_app(debug=True):
     return app
 
 app = create_app()
+
+# ctx = app.app_context()
+# ctx.push()
 
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":
