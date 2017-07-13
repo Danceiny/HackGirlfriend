@@ -49,7 +49,7 @@ def oneclickstart():
     print 'groups',groups
 
     kwargs = qqBotCenter.getQRUrlDelegate()
-    qqBotCenter.continueLogin(groups,kwargs)
+    # qqBotCenter.continueLogin(groups,kwargs)
     lazy_js_path = url_for('static',filename='js/lazysizes.min.js')
     min_img = url_for('QQBot.static',filename='images/qrcode-min.png')
     img = url_for('QQBot.static',filename='/'.join(('images', os.path.basename(kwargs.get('url')))))

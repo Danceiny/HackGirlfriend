@@ -43,7 +43,6 @@ class RegexConverter(BaseConverter):
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
     static_folder = os.path.abspath('Applications/static')
-    # 事实上，windows
     import platform
     if 'windows' in platform.platform().lower():
         print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \

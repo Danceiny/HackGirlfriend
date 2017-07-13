@@ -2,7 +2,7 @@
 
 由于celery只是任务队列，而不是真正意义上的消息队列，它自身不具有存储数据的功能，所以broker和backend需要通过第三方工具来存储信息，celery官方推荐的是 RabbitMQ和Redis，另外mongodb等也可以作为broker或者backend，可能不会很稳定，我们这里选择Redis作为broker兼backend。
 
-![](.Celery_images/f10d2926.png)
+![](http://opkk27k9n.bkt.clouddn.com/17-7-14/6809113.jpg)
 
 ```python
 from celery import Celery
