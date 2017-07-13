@@ -1,7 +1,7 @@
 # 你好，这里是HackGirlfriend！ 
-If [English Prefered](http://cannot.cc/README_EN.md) :shipit::sunglasses:。
+If [English Prefered](http://cannot.cc/HackGirlfriend/README_EN) :shipit: :sunglasses:。
 
-HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个“系统”的Web服务器后台项目。
+HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个“系统”的Web服务器后台项目。**你可以访问 [api.cannot.cc](http://api.cannot.cc/) 来获取更多功能测试方面的信息。**
 
 我计划将它打造为一个高可扩展性的后台，引入诸如QQ聊天机器人、NBA数据分析、学生组织后台管理等有趣或有着高频次需求的完全独立的、模块化的应用。性能也是追求之一。
 
@@ -16,17 +16,18 @@ HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个
 
 ## HackGirlfriend能做什么？
 
-由于这是一项进展中的项目，而且要满足“高可扩展性”的验证，以及“有趣的”、“高频次需求的”这些指标，这个列表将会持续更新(按照各项的开始时间排序)。
+由于这是一项进展中的项目，而且要满足“高可扩展性”的验证，以及“有趣的”、“高频次需求的”这些指标，这个列表将会持续更新（注：按照各项的开始时间排序，完成部分功能即打钩)。
 
-* [*] 文字转语音，基于百度语音的RESTful API，将文字转为声音文件。目前只完成api的简单转发。（一开始是想拿到百度的声音来做音频处理的，发现难度略大）
+* [x] 文字转语音，基于百度语音的RESTful API，将文字转为声音文件。目前只完成api的简单转发。（一开始是想拿到百度的声音来做音频处理的，发现难度略大）[试一试](http://api.cannot.cc/speak/hello_world)
 
 * [x] QQ聊天记录分析, 导出QQ聊天记录的txt文件，可得到聊天记录的时间、频次、内容、情感等自然语言处理分析记录。目前是本地运行的应用（暂不支持web端）。
 
-* [x] QQ聊天机器人，支持Web端扫描二维码登录开启基于图灵API的聊天机器人，支持群聊以及私聊，并支持部分参数设置。
+* [x] QQ聊天机器人，支持Web端扫描二维码登录开启基于图灵API的聊天机器人，支持群聊以及私聊，并支持部分参数设置。[试一试](http://api.cannot.cc/qqbot/one)
 
-* [x] 醉晚亭工作室部门管理后台，会议记录+请假系统+投票系统+成员管理。 
+* [x] 醉晚亭工作室部门管理后台，会议记录+请假系统+投票系统+成员管理。[试一试](http://api.cannot.cc/zuiwan/get-users-list) 
 
 * [ ] Secret App 服务端。[Secret](https://github.com/Danceiny/Secret)是我的一个类似带朋友圈的私密聊天Android项目。
+
 * [ ] NBA数据分析, 基于某项NBA+Programming主题的比赛获奖项目。
 
 与HackGirlfriend强相关的还有本人的姊妹项目[HG-admin](https://github.com/Danceiny/HG-admin)，HackGirlfriend的后台管理系统前端。
