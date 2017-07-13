@@ -17,6 +17,7 @@ from Secret.Secret import Secret
 from Zuiwan.User import ZuiwanUser
 from Zuiwan.Wechat import ZuiwanWechat
 
+from Libraries.Celery import celery,configure_celery
 
 def configure_blueprints(app):
     app.secret_key = 'jikappj39822@$*hjj'
@@ -42,7 +43,6 @@ class RegexConverter(BaseConverter):
 def create_app(debug=True):
     template_folder = os.path.abspath('Applications/static/templates')
     static_folder = os.path.abspath('Applications/static')
-    # 事实上，windows
     import platform
     if 'windows' in platform.platform().lower():
         print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \
@@ -54,6 +54,8 @@ def create_app(debug=True):
     app.debug = debug
     # Gzip(app)  # 使用gzip对响应进行压缩 压缩则不受理静态资源
     configure_blueprints(app)
+    configure_celery(app)
+    celery.init_app(app)
     # my_loader = jinja2.ChoiceLoader([
     #     app.jinja_loader,
     #     jinja2.FileSystemLoader([template_folder]),
@@ -63,8 +65,7 @@ def create_app(debug=True):
 
 app = create_app()
 
-# ctx = app.app_context()
-# ctx.push()
+
 
 # For debugging; will not run if launched from Nginx
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ urlmap的索引（细节不赘述）。一般与url相同。
 
 3. 测试
 
-- 有公用资源`~/Applications/static/js/lazysizes.min.js`，私有资源`~/Applications/static/templates/QRCode.html`以及`~/Applications/static/images/*.png`。
+- 有公用资源`~/Applications/static/js/lazysizes.min.js`，私有资源`~/Applications/QQBot/static/templates/QRCode.html`以及`~/Applications/QQBot/static/images/*.png`。
 
 在`BLUEPRINT_NAME=QQBot`情况下，在`~/Applications/QQBot/QQBot.py`中声明blueprint对象`QQBot`,并通过route装饰器，定义路由`qqbot/one`的视图函数`oneclickstart`。在该函数中：
 
@@ -77,6 +77,8 @@ urlmap的索引（细节不赘述）。一般与url相同。
 注：上文中所述“声明”意会即可 ~= 类的实例化 or 对象初始化 or 构造对象 etc.
 
 注2：以上值得揣摩的是url_for的endpoint参数，我用到了'static','QQBot.static'两个。分别指向了公有的`~/Applications/static`目录和私有的`~/Applications/QQBot/static`。
+
+注：以上配置，Windows环境，Pycharm-Configuration里不加PYTHONPATH，则会无法加载js,css等公用文件，加了source_roots或者content_roots（任一或全加）就正常。(更正：加这两个path同样无法加载，前面的错误是由于浏览器缓存所致。)不过我不推荐加，命令行才是最纯粹可预知的运行环境，服务器环境下是没有pycharm来做这些自动化工作的。
 
 # Nginx反向代理的新坑
 - [Flask的url_for重定向问题和相应源码分析](https://jiayi.space/post/flaskde-url_forzhong-ding-xiang-wen-ti-he-xiang-ying-yuan-ma-fen-xi)

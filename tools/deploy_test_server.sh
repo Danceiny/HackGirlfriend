@@ -8,7 +8,7 @@ ssh -i /mnt/c/Developer/workspaces/密钥/for_danceiny ubuntu@118.89.27.96 '
     git fetch --all
     git reset --hard origin/dev
     echo "-----------重启uwsgi-----------"
-    sudo killall -9 uwsgi
+    sudo killall -9 -u "www-data" uwsgi
     sudo service supervisor restart
     echo "-----------重启uwsgi成功，结束-----------"
     exit

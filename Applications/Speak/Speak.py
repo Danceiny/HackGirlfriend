@@ -51,7 +51,14 @@ def request_api(tex,lan,tok,ctp,cuid,spd,pit,vol,per):
     # response = requests.get(url, stream=True)
     voice_data = urllib.urlopen(url).read()
 
-    voice_fp = open('voice.mp3','wb+')
+    cur_file_path = os.getcwd()
+    if not cur_file_path.endswith('Applications'):
+        cur_file_path = concat_dirs(True, cur_file_path, 'Applications')
+    abs_vpath = concat_dirs(True, cur_file_path, 'QQBot', 'static', 'images',
+                            'voice_{}.mp3'.format(get_now_time_str_ms().replace('.', '')))
+
+    print abs_vpath,'abs_va'
+    voice_fp = open(abs_vpath,'wb+')
     voice_fp.write(voice_data)
     voice_fp.close()
     return 'write success'
