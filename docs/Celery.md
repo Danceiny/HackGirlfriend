@@ -86,7 +86,19 @@ app.conf.update(
 `celery -A tasks.workers -Q login_queue,user_crawler worker -l info --concurrency=1 -Ofair`
 login_queue，user_crawler是任务。
 
+# 与flask的结合
+- https://jiayi.space/post/zai-celeryzhong-shi-yong-flaskde-shang-xia-wen
+- Flask-Celery-Helper: pip install Flask-Celery-Helper 
+![](http://opkk27k9n.bkt.clouddn.com/17-7-13/14927625.jpg)
+
+wsgi应用来说，工厂模式是非常必要的：一般要求celery先启动，再启动web server，而celery实例化时需要传入app上下文，这不就是个死锁么。引入celery的工厂模式，则在启动web server（即实例化flask-application之前得到一个工厂模式生产的celery，之后再根据app上下文来配置这个celery。见
+- web-server入口 `~/Applications/wsgi.py` 
+- celery工厂 `~/Libraries/Celery.py` 
+- tasks
+`~/Platform/CeleryCenter/*.py`
+
 # Refs
+- [在 Flask 项目中使用 Celery](http://liyangliang.me/posts/2015/11/using-celery-with-flask/)
 - [如何构建一个分布式爬虫：基础篇](https://github.com/ResolveWang/WeiboSpider/wiki/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB%EF%BC%9A%E5%9F%BA%E7%A1%80%E7%AF%87)
 
 - [如何构建一个分布式爬虫：实战篇F](https://github.com/ResolveWang/WeiboSpider/wiki/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB%EF%BC%9A%E5%AE%9E%E6%88%98%E7%AF%87)

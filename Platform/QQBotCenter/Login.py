@@ -43,7 +43,7 @@ class Login(HttpClient):
         url = VRCODE_DOWNLOAD_URL.format(self.APPID, random.randint(0, 9), random.randint(0, 9))
         self.Download(url,self.VPath)
         self.QRSig = self.getCookie('qrsig')
-        print 'getQRCodeUrl',self.QRSig
+        print 'getQRUrlDelegate',self.QRSig
         logger.info('get QRSig : %s'% self.QRSig)
         self.QR_AVALABLE = True
         return self.VPath

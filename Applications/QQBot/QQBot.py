@@ -40,7 +40,6 @@ def oneclickstart():
         request.data = temp_raw_map
     data = request.data
     groups = []
-    print data
     if data != None and any(data):
         values = data.get('v')
         if isinstance(values,unicode):
@@ -49,43 +48,8 @@ def oneclickstart():
             groups.append(v.decode('utf8','ignore'))
     print 'groups',groups
 
-    wm = WorkerManager(2) # 创建线程池
-    wm.add_job(qqBotCenter.getQRCodeUrl) # 将所有请求加入队列中
-    wm.start()
-    wm.wait_for_complete()
-
-    kwargs = wm.get_result()
-
-    from Platform.CeleryCenter import QQBot as qqbotCelery
-    # 10s 后开始执行异步任务
-    qqbotCelery.qqbot_bg.apply_async(args=[groups,kwargs], countdown=10)
-    # wm.add_job(qqBotCenter.continueLogin,groups,kwargs)
-    # wm.start()
-    # t = threading.Thread(target=qqBotCenter.continueLogin, args=(groups,kwargs))
-    # t.setDaemon(True)
-    # t.start()#不能join，join就堵塞了，无法返回
-
-    # 多进程： windows上开不起来？？？
-    # p = multiprocessing.Process(target=qqBotCenter.continueLogin, args=(groups,kwargs))
-    # p.start()
-    # p.join()
-
-    # kwargs = None
-    # pool = multiprocessing.Pool()
-    # result = Queue.Queue()
-    #
-    # '''
-    # 将子进程对象存入队列中。
-    # '''
-    # q.put(pool.apply_async(qqBotCenter.getQRCodeUrl, args=()))  # 维持执行的进程总数为10，当一个进程执行完后添加新进程.
-    # '''
-    # 因为这里使用的为pool.apply_async异步方法，因此子进程执行的过程中，父进程会执行while，获取返回值并校验。
-    # '''
-    # while True:
-    #     kwargs = result.get().get()
-    #     if kwargs:
-    #         pool.terminate()  # 结束进程池中的所有子进程。
-    #         break
+    kwargs = qqBotCenter.getQRUrlDelegate()
+    qqBotCenter.continueLogin(groups,kwargs)
     lazy_js_path = url_for('static',filename='js/lazysizes.min.js')
     min_img = url_for('QQBot.static',filename='images/qrcode-min.png')
     img = url_for('QQBot.static',filename='/'.join(('images', os.path.basename(kwargs.get('url')))))
