@@ -1,7 +1,11 @@
-# 你好，这里是HackGirlfriend！ [English Prefered](http://cannot.cc/README_EN.md)
+# 你好，这里是HackGirlfriend！ 
+If [English Prefered](http://cannot.cc/README_EN.md) :shipit::sunglasses:。
+
 HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个“系统”的Web服务器后台项目。
 
-我计划将它打造为一个高可扩展性的后台，引入诸如QQ聊天机器人、NBA数据分析、学生组织后台管理等有趣或有着高频次需求的完全独立的、模块化的应用。
+我计划将它打造为一个高可扩展性的后台，引入诸如QQ聊天机器人、NBA数据分析、学生组织后台管理等有趣或有着高频次需求的完全独立的、模块化的应用。性能也是追求之一。
+
+由于我基本处于学习中的Web菜鸟阶段以及作为高年级的本科生，也身处技术学校的技术团队，HackGirlfriend将主要用于向高手学习、与网络探究、与同辈交流、指导学弟学妹。
 
 起名是一件有学问的事情。不要把HackGirlfriend打错成 'HackGrilfriend' 或者 'HackGirlfirend'喔^_^（这是我经常干的事情，如果没有Tab自动完成的话）。
 
@@ -22,6 +26,7 @@ HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个
 
 * [x] 醉晚亭工作室部门管理后台，会议记录+请假系统+投票系统+成员管理。 
 
+* [ ] Secret App 服务端。[Secret](https://github.com/Danceiny/Secret)是我的一个类似带朋友圈的私密聊天Android项目。
 * [ ] NBA数据分析, 基于某项NBA+Programming主题的比赛获奖项目。
 
 与HackGirlfriend强相关的还有本人的姊妹项目[HG-admin](https://github.com/Danceiny/HG-admin)，HackGirlfriend的后台管理系统前端。
@@ -38,7 +43,8 @@ See [DeployWebServer](https://github.com/Danceiny/HackGirlfriend/DeployWebServer
  
  or See [Docker Deploy](http://cannot.cc/HackGirlfriend/Docker).
 
-# List of Documents
+# 相关原创文档列表
+
 - [Flask初探以及在HackGirlfriend中的实战应用](http://cannot.cc/HackGirlfriend/Flask)
 - [Flask + uWSGI + supervisor在Linux服务器上的部署](http://cannot.cc/HackGirlfriend/DeployWebServer)
 
