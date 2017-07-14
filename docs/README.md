@@ -34,13 +34,13 @@ HackGirlfriend是我真正意义上的第一个GitHub开源项目，也是一个
 
 # 如何部署HackGirlfriend到你的主机上？
 
-有关部署平台的选择，我在开发中力求兼顾平台兼容性，基本功能在Linux/OS X/Windows上均能正常工作，当然也有平台相关的无能为力。详见[HackGirlfriend的平台兼容性](https://cannot.cc/HackGirlfriend/Platform)
+有关部署平台的选择，我在开发中力求兼顾平台兼容性，基本功能在Linux/OS X/Windows上均能正常工作，当然也有平台相关的无能为力。详见[HackGirlfriend的平台兼容性](https://cannot.cc/HackGirlfriend/Platform)。
 
-**First, you need know the dependencies of HackGirlfriend.**
-See [Dependencies](https://cannot.cc/HackGirlfriend/Dependencies).
+**首先，需要安装所有依赖。这些依赖有些是跑整个框架的必需依赖，也有些是非必需项、可替换项。详情**
+See [Dependencies](https://cannot.cc/HackGirlfriend/Dependencies)。
 
-**Then, follow the details on how to deploy this project on Ubuntu Server.**
-See [DeployWebServer](https://github.com/Danceiny/HackGirlfriend/DeployWebServer).
+**然后嗯，把HackGirlfriend搞到您的公网服务器上吧。**
+See [DeployWebServer](https://github.com/Danceiny/HackGirlfriend/DeployWebServer)。
  
  or See [Docker Deploy](https://cannot.cc/HackGirlfriend/Docker).
 

@@ -16,8 +16,8 @@ import traceback
 from QMessage import QMessage
 from Login import Login
 def oneclickstart():
-    # 只有top module的函数才能序列化（多进程调用的target）
-    QQBot.main(mode='api')
+    # 只有top module的函数才能序列化（多进程multiprocess调用的target）
+    pass
 ###########   part   #####################
 def deleteAllQRCode(path):
     if os.path.isfile(path) and path.endswith(('png','jpg','gif')):
@@ -67,11 +67,10 @@ class QQBotCenter(object):
         # 3. return loginDelegate(Login() class instance), url(img abs path)
         HttpClient_Ist = HttpClient()
         try:
-            cur_file_path = os.getcwd()
-            if not cur_file_path.endswith('Applications'):
-                cur_file_path = concat_dirs(True, cur_file_path,
-                                            'Applications')
-            abs_vpath = concat_dirs(True, cur_file_path, 'QQBot', 'static',
+            cur_file_path = __file__
+            abs_vpath = concat_dirs(True, cur_file_path, '..','..',
+                                    '..','Applications','QQBot', ' \
+                                                                     ''static',
                                     'images', '{}.png'.format(
                     get_now_time_str_ms().replace('.', '')))
             loginParams = {'DELETE_PIC': True,
@@ -99,8 +98,6 @@ class QQBotCenter(object):
                 qqLoginDelegate = v
             elif 'httpClientIst' == k:
                 HttpClient_Ist = v
-            elif 'loginParams' == k:
-                loginParams = v
 
         if qqLoginDelegate != None:
             qqLoginDelegate.login()

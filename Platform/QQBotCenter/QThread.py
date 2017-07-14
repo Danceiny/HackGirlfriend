@@ -6,20 +6,13 @@ import re
 import random
 import json
 import os
-
 import datetime
 import time
 import threading
 import urllib
 from HttpClient import HttpClient
 import Utils as util
-
 from CONFIGS import *
-
-
-
-
-
 class PmchatThread(threading.Thread):
 
     # con = threading.Condition()
@@ -291,7 +284,8 @@ class GroupThread(threading.Thread):
         try:
             if match:
                 logger.info("output about info")
-                info="小黄鸡 v3.9 Modified by Danceiny. See: http://blog.cannot.cc/"
+                info="小黄鸡 v4.0 Modified by Danceiny. See: " \
+                     "http://blog.cannot.cc/"
                 self.reply(info)
                 return True
         except Exception, e:
