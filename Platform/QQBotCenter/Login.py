@@ -126,7 +126,7 @@ class Login(HttpClient):
         self.tmpUserName = ret[11]
         logger.info('登录账号的昵称是：%s' % self.tmpUserName)
         login_html = self.Get(ret[5],REFERER_URL)
-        logger.info('Get ret[5] html: %s',login_html)
+        logger.info('Get ret[5] html: %s' % login_html)
         # proxy_iframe.src = "http://web2.qq.com/web2_cookie_proxy.html";
         url = getReValue(login_html, r' src="(.+?)"', 'Get mibao_res Url Error.', 0)
         if url != '':
@@ -141,16 +141,18 @@ class Login(HttpClient):
             try:
                 reqUrl = (LOGINED_CHECK_VERIFY_URL).format(self.PTWebQQ, CLIENT_ID, self.PSessionID, util.get_ts())
 
-                logger.info('get找到群的url: %s',reqUrl)
+                logger.info('get找到群的url: %s'% reqUrl)
                 html2 = self.Get(reqUrl,REFERER_URL)
-                logger.info("[{0}] getvfwebqq html: %s".format(3-LoginError),str(html2))
+                logger.info("[{0}] getvfwebqq html: %s".format(3-LoginError) %
+                                                               str(html2))
                 ret2 = json.loads(html2)
                 login_html = self.Post(LOGINED_CHECK_URL, {
                     'r': '{{"ptwebqq":"{0}","clientid":{1},"psessionid":"{2}","status":"online"}}'.format(self.PTWebQQ,
                                                                                                           CLIENT_ID,
                                                                                                           self.PSessionID)
                 }, LOGINED_CHECK_REFER_URL)
-                logger.info('[{0}] check login_html: %s'.format(3-LoginError),login_html)
+                logger.info('[{0}] check login_html: %s'.format(3-LoginError)
+                % login_html)
                 ret = json.loads(login_html)
                 LoginError = 0
             except:
@@ -164,7 +166,8 @@ class Login(HttpClient):
         self.PSessionID = ret['result']['psessionid']
 
         self.MyUIN = ret['result']['uin']
-        logger.info("QQ号：{0} 登陆成功, 用户名：{1}".format(ret['result']['uin'], self.tmpUserName))
+        logger.info("QQ号：{0} 登陆成功, 用户名：{1}".format(ret['result']['uin'],
+        self.tmpUserName))
         logger.info('Login success')
         logger.info("登陆二维码用时" + util.pass_time(self.initTime)[1] + "秒")
 
