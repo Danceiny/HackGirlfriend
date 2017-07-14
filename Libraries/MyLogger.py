@@ -54,7 +54,7 @@ class MyLogger():
         global_loggers.warning(message)
         self.logger.warning(message)
 
-    def criticle(self, message):
+    def critical(self, message):
         global_loggers.critical(message)
 
     def error(self, message):

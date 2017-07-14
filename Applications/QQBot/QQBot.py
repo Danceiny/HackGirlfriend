@@ -22,7 +22,7 @@ from Libraries.ErrorDefine import *
 # 实例化一个blueprint
 QQBot = Blueprint("QQBot", __name__,template_folder='templates',static_folder='static',static_url_path='qqbot/static')
 from Libraries.mythreadpool import *
-from Platform.QQBotCenter.QQBotCenter import QQBotCenter,oneclickstart
+from Platform.QQBotCenter.QQBotCenter import QQBotCenter
 qqBotCenter = QQBotCenter.instance()
 from flask import current_app
 
@@ -42,14 +42,21 @@ def oneclickstart():
     groups = []
     if data != None and any(data):
         values = data.get('v')
-        if isinstance(values,unicode):
+        if isinstance(values,(unicode,str)):
             values = values.encode('utf-8')
         for v in values.split(','):
             groups.append(v.decode('utf8','ignore'))
     print 'groups',groups
 
     kwargs = qqBotCenter.getQRUrlDelegate()
+
     # qqBotCenter.continueLogin(groups,kwargs)
+
+    t = threading.Thread(target=qqBotCenter.loginWithDelegate, args=groups,
+                         kwargs=kwargs)
+    t.setDaemon(True)
+    t.start()  # 不能join，join就堵塞了，无法返回
+
     lazy_js_path = url_for('static',filename='js/lazysizes.min.js')
     min_img = url_for('QQBot.static',filename='images/qrcode-min.png')
     img = url_for('QQBot.static',filename='/'.join(('images', os.path.basename(kwargs.get('url')))))

@@ -38,11 +38,13 @@ def getQRUrlDelegate(own_qq_number=0, HttpClient_Ist=None):
         qqLoginDelegate = Login(own_qq_number, loginParams)
         qqLoginDelegate.preLogin()
         url = qqLoginDelegate.getQRCodeUrl(Try=5)
-        return {'loginDelegate':qqLoginDelegate,'url':url,'httpclient':HttpClient_Ist}
+        return {'loginDelegate':qqLoginDelegate,'url':url,
+                'httpClientIst':HttpClient_Ist}
     except Exception, e:
         logger.error(str(e))
         traceback.print_exc()
-        deleteAllQRCode()
+        deleteAllQRCode('/home/ubuntu/web2/HackGirlfriend/Applications/QQBot'
+                        '/static/images/')
         os._exit(-1)
 
 
@@ -50,6 +52,7 @@ def loginWithDelegate(*args,**kwargs):
     qqLoginDelegate = None
     HttpClient_Ist = None
     groups = args
+    print groups,kwargs,'b'
     for k, v in kwargs.items():
         if 'loginDelegate' == k:
             qqLoginDelegate = v
