@@ -4,8 +4,9 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from QThread import *
+from QQBotDBManager import QQBotDBManager
+from CONFIGS import *
 
-MSG_HANDLER_URL = 'http://d1.web2.own_qq_number.com/channel/get_c2cmsg_sig2?id={0}&to_uin={1}&clientid={2}&psessionid={3}&service_type={4}&t={5}'
 
 
 
@@ -30,6 +31,7 @@ class QMessage(threading.Thread):
 
     def __init__(self,HttpClient_Ist,LoginDelegate,params=None):
         threading.Thread.__init__(self)
+        self.qqBotDBManager = QQBotDBManager.instance()
         self.PSessionID = LoginDelegate.PSessionID
         self.PTWebQQ = LoginDelegate.PTWebQQ
         self.VFWebQQ = LoginDelegate.VFWebQQ
@@ -144,18 +146,27 @@ class QMessage(threading.Thread):
 
     def msg_handler(self,msgObj):
         for msg in msgObj:
+
+            data = {}
+            data['timestamp'] = msg['value']['time']
+            data['pollType'] = msg['poll_type']
+            data['content'] = self.get_msg_content(msg['value']['content'])
+            data['to_qqNumber'] = msg['value']['to_uin']
+            data['msgId'] = '_'.join((str(data['timestamp']),str(msg['value']['msg_id'])))
+            # 持久化收到的消息 TODO:如果收到的这条消息是一段对话的开始，将msgId传给子线程
+            ret = self.qqBotDBManager.add_records(data)
+
             msgType = msg['poll_type']
             # QQ私聊消息
             if msgType == 'message' or msgType == 'sess_message':  # 私聊 or 临时对话
-                txt = self.get_msg_content(msg['value']['content'])
                 tuin = msg['value']['from_uin']
-                msg_id = msg['value']['msg_id']
+                msg_id = data['msgId']
 
-                # print "{0}:{1}".format(from_account, txt)
                 targetThread = util.thread_exist(tuin,self.ThreadList)
                 if targetThread:
-                    targetThread.push(txt, msg_id)
+                    targetThread.push(data['content'], msg_id)
                 else:
+
                     try:
                         service_type = 0
                         isSess = 0
@@ -174,9 +185,8 @@ class QMessage(threading.Thread):
 
                         tmpThread = PmchatThread(tuin, isSess, group_sig, service_type, self)
                         tmpThread.start()
-
                         self.ThreadList.append(tmpThread)
-                        tmpThread.push(txt,msg_id)
+                        tmpThread.push(data['content'],msg_id,ret)
                     except Exception, e:
                         logger.info("error"+str(e))
 
@@ -196,8 +206,7 @@ class QMessage(threading.Thread):
             #     "content": [["font", {"color": "000000", "name": "微软雅黑", "size": 10, "style": [0, 0, 0]}], " 这里修改了还不行"],
             #     "from_uin": 2188322869, "group_code": 2188322869, "msg_id": 32905, "msg_type": 4,
             #     "send_uin": 4171258001, "time": 1499835891, "to_uin": 491976401}}], "retcode": 0}
-            if msgType == 'group_message' or msgType == 4:
-                txt = self.get_msg_content(msg['value']['content'])
+            if msgType == 'group_message':
                 guin = msg['value']['from_uin'] #u'from_uin': 2188322869L
                 gid = self.GroupCodeList.get(int(guin)) #u'gid': 3253257675L
                 tuin = msg['value']['send_uin']#u'to_uin': 491976401
@@ -205,12 +214,12 @@ class QMessage(threading.Thread):
                 if str(guin) in self.GroupWatchList:
                     g_exist = util.group_thread_exist(gid,self.GroupThreadList)
                     if g_exist:
-                        g_exist.handle(tuin, txt, seq)
+                        g_exist.handle(tuin, data['content'], seq)
                     else:
                         tmpThread = GroupThread(guin, gid, self)
                         tmpThread.start()
                         self.GroupThreadList.append(tmpThread)
-                        tmpThread.handle(tuin, txt, seq)
+                        tmpThread.handle(tuin, data['content'], seq)
                         logger.info("群线程已生成")
                 else:
                     logger.info(str(gid) + "群有动态，但是没有被监控")

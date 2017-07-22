@@ -1,4 +1,7 @@
+```json
+{u'result': [{u'poll_type': u'group_message', u'value': {u'group_code': 1750998772, u'msg_type': 4, u'send_uin': 2888753848, u'msg_id': 37513, u'content': [[u'font', {u'color': u'000000', u'style': [0, 0, 0], u'name': u'\u5fae\u8f6f\u96c5\u9ed1', u'size': 10}], u'!about'], u'from_uin': 1750998772, u'time': 1500049694, u'to_uin': 491976401}}], u'retcode': 0}
 
+```
 ## 私聊消息数据结构
 ```json
 {
