@@ -8,7 +8,7 @@ import logging
 
 CLIENT_ID = 53999199
 VPATH = 'v_%s.png'
-
+MSG_HANDLER_URL = 'http://d1.web2.own_qq_number.com/channel/get_c2cmsg_sig2?id={0}&to_uin={1}&clientid={2}&psessionid={3}&service_type={4}&t={5}'
 WEB_QQ_URL = 'http://w.qq.com/'
 UI_PTLOGIN2_URL = 'https://ui.ptlogin2.qq.com/cgi-bin/login?daid=164&target=self&style=16&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fw.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001'
 

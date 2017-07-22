@@ -48,16 +48,6 @@ class Login(HttpClient):
         self.QR_AVALABLE = True
         return self.VPath
 
-    def downloadQRCode(self, Try=0):
-        if self.preLogined:
-            self.Download((VRCODE_DOWNLOAD_URL).format(self.APPID, random.randint(0, 9), random.randint(0, 9)),self.VPath)
-            logger.info('[{0}] Get QRCode Picture Success.'.format(Try))
-            self.QRSig = self.getCookie('qrsig')
-            logger.info('get QRSig : %s'%self.QRSig)
-            self.QR_AVALABLE = True
-        else:
-            self.preLogin()
-
     def checkQRCode(self,Try=0,StartTime=None):
         if StartTime == None:StartTime = util.date_to_millis(datetime.datetime.utcnow())
         ret = None

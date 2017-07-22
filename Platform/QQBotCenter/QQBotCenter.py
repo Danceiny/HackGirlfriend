@@ -6,7 +6,6 @@ sys.setdefaultencoding("utf-8")
 from CONFIGS import *
 
 from Libraries.Singleton.Singleton import Singleton
-import QQBot
 from HttpClient import HttpClient
 from Libraries.mythreadpool import WorkerManager,Worker
 import threading
@@ -16,8 +15,8 @@ import traceback
 from QMessage import QMessage
 from Login import Login
 def oneclickstart():
-    # 只有top module的函数才能序列化（多进程调用的target）
-    QQBot.main(mode='api')
+    # 只有top module的函数才能序列化（多进程multiprocess调用的target）
+    pass
 ###########   part   #####################
 def deleteAllQRCode(path):
     if os.path.isfile(path) and path.endswith(('png','jpg','gif')):
@@ -30,10 +29,6 @@ def deleteAllQRCode(path):
 class QQBotCenter(object):
     def __init__(self):
         self.HttpClient_Ist = HttpClient()
-
-    def run(self,groups):
-        print('QQBotcenter.py run',groups)
-        QQBot.main(mode='api',groups=groups)
 
     def continueLogin(self,*args,**kwargs):
         # wm = WorkerManager(2) # 创建线程池
@@ -49,12 +44,12 @@ class QQBotCenter(object):
         if kwargs.get('mode') == 'celery':
             from Platform.CeleryCenter.QQBot import celery as qqbotCelery
             # 10s 后开始执行异步任务
-            qqbotCelery.qqbot_bg.apply_async(target=QQBot.loginWithDelegate,args=[groups, kwargs], countdown=10)
+            qqbotCelery.qqbot_bg.apply_async(target=self.loginWithDelegate,args=[groups, kwargs], countdown=10)
         else:
             # wm = WorkerManager(2)  # 创建线程池
             # wm.add_job(QQBot.loginWithDelegate,*groups,**kwargs)
             # wm.start()
-            t = threading.Thread(target=QQBot.loginWithDelegate,args=groups,kwargs=kwargs)
+            t = threading.Thread(target=self.loginWithDelegate,args=groups,kwargs=kwargs)
             t.setDaemon(True)
             t.start()#不能join，join就堵塞了，无法返回
         return
@@ -67,11 +62,10 @@ class QQBotCenter(object):
         # 3. return loginDelegate(Login() class instance), url(img abs path)
         HttpClient_Ist = HttpClient()
         try:
-            cur_file_path = os.getcwd()
-            if not cur_file_path.endswith('Applications'):
-                cur_file_path = concat_dirs(True, cur_file_path,
-                                            'Applications')
-            abs_vpath = concat_dirs(True, cur_file_path, 'QQBot', 'static',
+            cur_file_path = __file__
+            abs_vpath = concat_dirs(True, cur_file_path, '..','..',
+                                    '..','Applications','QQBot', ' \
+                                                                     ''static',
                                     'images', '{}.png'.format(
                     get_now_time_str_ms().replace('.', '')))
             loginParams = {'DELETE_PIC': True,
@@ -93,14 +87,12 @@ class QQBotCenter(object):
         qqLoginDelegate = None
         HttpClient_Ist = None
         groups = args
-        print groups, kwargs, 'b'
+        print groups, kwargs, 'qqbotcenter,loginwithdelegate'
         for k, v in kwargs.items():
             if 'loginDelegate' == k:
                 qqLoginDelegate = v
             elif 'httpClientIst' == k:
                 HttpClient_Ist = v
-            elif 'loginParams' == k:
-                loginParams = v
 
         if qqLoginDelegate != None:
             qqLoginDelegate.login()
@@ -146,3 +138,5 @@ class QQBotCenter(object):
         #     if kwargs:
         #         pool.terminate()  # 结束进程池中的所有子进程。
         #         break
+        else:
+            return {'msg':'delegate is None!'}

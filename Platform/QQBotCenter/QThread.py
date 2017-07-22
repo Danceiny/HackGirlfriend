@@ -6,20 +6,14 @@ import re
 import random
 import json
 import os
-
 import datetime
 import time
 import threading
 import urllib
 from HttpClient import HttpClient
 import Utils as util
-
 from CONFIGS import *
-
-
-
-
-
+from QQBotDBManager import QQBotDBManager
 class PmchatThread(threading.Thread):
 
     # con = threading.Condition()
@@ -27,6 +21,7 @@ class PmchatThread(threading.Thread):
 
     def __init__(self, tuin, isSess, group_sig, service_type,QMsg_Ist):
         threading.Thread.__init__(self)
+        self.qqbotDBManager = QQBotDBManager.instance()
         self.tuin = tuin
         self.isSess = isSess
         self.group_sig=group_sig
@@ -49,12 +44,20 @@ class PmchatThread(threading.Thread):
             if time.time() - self.lastcheck > 300:
                 break
 
-    def reply(self, content):
+    def reply(self, content,ret=None):
         self.QMsg_Ist.send_msg(self.tuin, str(content), self.isSess, self.group_sig, self.service_type)
         logger.info("Reply to " + str(self.tuin) + ":" + str(content))
+        data = {}
+        data['content'] = content
+        data['up_msgId'] = ret['data']['msgId']
+        data['pollType'] = ret['data']['pollType']
+        data['to_qqNumber'] = self.tuin
+        # 持久化发出的消息
+        ret = self.qqBotDBManager.add_records(data)
 
-    def push(self, ipContent, seq):
-        if seq == self.lastseq:
+
+    def push(self, ipContent, seq, ret=None):
+        if seq == self.lastseq:#seq = msg_id
             return True
         else:
             self.lastseq=seq
@@ -65,6 +68,7 @@ class PmchatThread(threading.Thread):
         try:
             self.replystreak = self.replystreak + 1
             logger.info("PM get info from AI: "+ipContent)
+            ret['data']['pollType'] = 'tuling-ai-private'
             if(u"机器人" in ipContent):
                 self.open_bot = True
             if(u"关掉吧" in ipContent):
@@ -76,15 +80,22 @@ class PmchatThread(threading.Thread):
                 logger.info("AI REPLY:"+str(info))
                 info = json.loads(info)
                 if info["code"] in [40001, 40003, 40004]:
-                    self.reply("我今天累了，不聊了")
+                    self.reply("我今天累了，不聊了",ret)
                     logger.warning("Reach max AI call")
                 elif info["code"] in [40002, 40005, 40006, 40007]:
-                    self.reply("我遇到了一点问题，请稍后@我")
+                    self.reply("我遇到了一点问题，请稍后@我",ret)
                     logger.warning("PM AI return error, code:"+str(info["code"]))
                 else:
                     rpy = str(info["text"]).replace('<主人>','你').replace('<br>',"\n")
-                    self.reply(rpy)
+                    self.reply(rpy,ret)
                 return True
+            else:
+                paraf = {'userid':str(self.tuin),'key':TULING_KEY,'info':ipContent}
+                info = self.HttpClient_Ist.Get('https://api.cannot.cc/v1/speak/chatbot?' + urllib.urlencode(paraf))
+                logger.info('Self-built AI reply: ' + str(info))
+                ret['data']['pollType'] = 'danceiny-ai-private'
+                self.reply(info['text'],ret)
+
         except Exception, e:
             logger.error("ERROR:"+str(e))
         return False
@@ -291,7 +302,8 @@ class GroupThread(threading.Thread):
         try:
             if match:
                 logger.info("output about info")
-                info="小黄鸡 v3.9 Modified by Danceiny. See: http://blog.cannot.cc/"
+                info="小黄鸡 v4.0 Modified by Danceiny. See: " \
+                     "http://blog.cannot.cc/"
                 self.reply(info)
                 return True
         except Exception, e:

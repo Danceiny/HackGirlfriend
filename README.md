@@ -1,4 +1,5 @@
 # Hack Girlfriend
+[English Prefered](https://github.com/Danceiny/HackGirlfriend/blob/master/README_EN.md).
 
 ## 关于本项目 
 
@@ -8,55 +9,16 @@
 
 **本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**
 
-## 服务器部署示例
-以 腾讯云 Ubuntu 16 64bit 为例。
+[文档请参见](https://cannot.cc/HackGirlfriend)。
 
-### Pre-requisites
-- mysql-server / libmysqld
-- nginx
-- uwsgi
-### Nginx + uWSGI + supervisor
-nginx配置 uwsgi_pass, 可以是sock文件，可以是ip:port。
-`pip install uwsgi`
-`pip install supervisor`
-/etc/nginx/conf.d/*.conf
+## [Deploy](https://cannot.cc/HackGirlfriend/DeployWebServer)
 
-uwsgi的配置文件socket=对应nginx的uwsgi_pass。
+## [ToDo]((https://cannot.cc/HackGirlfriend/TodoList))
 
-需要安装uwsgi-plugin-python。
+## 姊妹项目
 
-uwsgi配置 uwsgi.ini:
-```ini
-socket = 
-pythonpath = 
-home = # venv / virtualenv / ...
-plugin = python,http
-...
-```
-### Common commands
-- ps -ef | grep nginx
-- service nginx start/reload/stop
-- sudo ln -s nginx_uwsgi.conf /etc/nginx/conf.d/
-
-
-## TODO LIST
-
-- [ ] QQ Bot
-    - 模块化： 进行中
-    - 群聊监听保存聊天记录
-    - 私聊机器人（图灵+其他）
-- [ ] QQ Records Analysis
-    - 対txt的私聊记录进行**时间、话题、情感**分析。
-    - 对群聊记录进行分析
-    - 自动化获取聊天记录
-- [ ] 语音合成
-    - [ ] 接入百度语音REST API
-    - 接入讯飞API，需要做其他语言到python的桥接，待定
-    - fmod api的python接口实现，难度较大，不如直接在其他平台原生实现。
-    
-
-# Refs
-- https://github.com/xiyouMc/WebHubBot/
+- [HG-vue](https://github.com/Danceiny/HG-vue)
+- [Secret-App](https://github.com/Danceiny/Secret_app)
 
 # Copyrights
 Spring Oscillator 2017 &copy; Danceiny
@@ -77,14 +39,14 @@ All rights reserved.
 ### Platform
 Applications转发到此（有一个对应关系）。
 
-### Docs
-项目中用到的技术，学习中可以留下**简要**的文档。
+### docs
+项目中用到的技术，学习中可以留下**简要**的文档，并不断规范化。master分支下的该文件夹是GitHub Pages的目录，访问[HackGirlfriend Pages](https://cannot.cc/HackGirlfriend).
 
 ### Libraries
 项目中用到的库（第三方或者自建）。
 
 ### PackageData
-公用配置信息。（暂时还没太想好）
+公用配置信息。诸如项目部署的配置文件。
 
 ### Spider
 项目中用到的爬虫。

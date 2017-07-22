@@ -8,27 +8,43 @@ import requests
 import urllib
 from Libraries.Utils import *
 import PackageData.BaiduYuyin as baidu
+from Platform.ChatbotCenter.ChatbotCenter import ChatbotCenter
+from Platform.SpeakCenter.SpeakCenter import SpeakCenter
 
 # 实例化一个blueprint
 Speak = Blueprint("Speak", __name__)
+chatbotCenter = ChatbotCenter()
+speakCenter = SpeakCenter()
 
-# @Speak.route('/')
-# def root():
-#     return 'Hello World!'
-
-
-DEFAULT_LAN = 'zh'
-DEFAULT_CTP = 1 # client type, 1 as web
-DEFAULT_SPEED = 5   # like baidu
-DEFAULT_PER = 0 # like baidu, woman
-DEFAULT_PIT = 5 # 音调
-DEFAULT_VOL = 5 # 音调
-
+@check_api_cost_time
+@allow_cross_domain
+@package_json_request_data
+@Speak.route('v1/speak/chatbot',methods = ['POST','GET'],endpoint='chatbot_reply')
+def chatbot_reply():
+    result = {'code':ED.no_err,'data':{}}
+    data = request.data
+    # data = {mode:'',sent:'',password:'',email:'',role:'',...}
+    if data != None:
+        if data.get('mode') == 'simple':
+            result = chatbotCenter.simple_reply(data)
+        elif data.get('mode') == 'complicate':
+            result = chatbotCenter.complicate_reply(data)
+        else:
+            result['code'] = ED.err_params
+    else:
+        result['code'] = ED.err_sys
+    return json.dumps(result)
 
 @Speak.route('speak/<string:words>')
 def speak_words(words):
     # return 'speak'
     # words must less then 1024 bytes
+    DEFAULT_LAN = 'zh'
+    DEFAULT_CTP = 1  # client type, 1 as web
+    DEFAULT_SPEED = 5  # like baidu
+    DEFAULT_PER = 0  # like baidu, woman
+    DEFAULT_PIT = 5  # 音调
+    DEFAULT_VOL = 5  # 音调
     strSize = sys.getsizeof(words)
     if strSize > 1024:
         print 'The text words must be less than 1024 bytes'
