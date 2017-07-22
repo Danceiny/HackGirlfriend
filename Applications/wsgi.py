@@ -4,9 +4,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))#把HackGirlfriend目录加载到$PYTHONPATH中
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from flask import Flask,current_app,ctx
-
+from flask import Flask
 from werkzeug.routing import BaseConverter
 from Libraries.DBModel import *
 from Libraries.Utils import *
@@ -17,7 +15,7 @@ from Secret.Secret import Secret
 from Zuiwan.User import ZuiwanUser
 from Zuiwan.Wechat import ZuiwanWechat
 
-from Libraries.Celery import celery,configure_celery
+from Libraries.Celery import configure_celery
 
 def configure_blueprints(app):
     app.secret_key = 'jikappj39822@$*hjj'
@@ -41,21 +39,23 @@ class RegexConverter(BaseConverter):
         self.regex = items[0]
 
 def create_app(debug=True):
-    template_folder = os.path.abspath('Applications/static/templates')
-    static_folder = os.path.abspath('Applications/static')
+    template_folder = 'static/templates'
+    static_folder = 'static'
+    if not 'Applications' in os.getcwd():
+        template_folder = '/'.join(('Applications',template_folder))
+        static_folder = '/'.join(('Applications',static_folder))
     import platform
     if 'windows' in platform.platform().lower():
         print('WARNING: in Windows Platform, you must declare templates_folder when instantiate blueprint, withing \
         relative path, usually "templates".')
     # 绝对路径！！！必须以/开头
-    app = Flask('HackGirlfriend',static_folder = static_folder,template_folder = template_folder)
+    app = Flask('HackGirlfriend',static_folder = static_folder, template_folder = template_folder)
     # app = Flask('HackGirlfriend')
     app.url_map.converters['regex'] = RegexConverter
     app.debug = debug
     # Gzip(app)  # 使用gzip对响应进行压缩 压缩则不受理静态资源
     configure_blueprints(app)
     configure_celery(app)
-    celery.init_app(app)
     # my_loader = jinja2.ChoiceLoader([
     #     app.jinja_loader,
     #     jinja2.FileSystemLoader([template_folder]),

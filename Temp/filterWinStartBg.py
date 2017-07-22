@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 __author__ = 'Danceiny'
 __doc__ = """
 本模块实现以下功能：
+2017-07-15 22:45:27 更新：支持Chrome插件Momentum的背景图。
 1. 将Win10开机时的背景图片(DIR)复制到指定目录(PIC_DIR)，并根据文件类型重命名。
 2. 删除指定目录下不适合作为桌面背景（不满足DEFAULT_RESOLUTION）的图片。
 
@@ -31,11 +32,13 @@ import imghdr  # determine img type
 
 ######################  自定义常量   ####################
 USERNAME = 'huangzhen'
+MOMENTUM_VER = '0.95.3_0'   # chrome 插件 momontum的版本号,可根据下面代码中的MOMENTUM_DIR进入文件管理器中查找
 PIC_DIR = r''
 DEFAULT_RESOLUTION = (1920,1080)
 ######################  自定义常量   ####################
 
 DIR = r'C:/Users/{}/AppData/Local/Packages/Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy/LocalState/Assets'.format(USERNAME)
+MOMENTUM_DIR = r'C:/Users\{USER}\AppData\Local\Google\Chrome\User Data\Default\Extensions\laookkfknpbbblfpciffpaejjkokdgca\{VERSION}\backgrounds'.format(USER=USERNAME,VERSION=MOMENTUM_VER)
 PIC_DIR = r'C:/Users/{}/Documents/Beautiful/Background'.format(USERNAME) if PIC_DIR == '' else PIC_DIR
 DIR = DIR.replace('/','\\')
 PIC_DIR = PIC_DIR.replace('/','\\')
@@ -83,8 +86,8 @@ def get_img_resolution(filename):
     # return imgSize
     return Image.open(filename).size
 
-def del_unfit_imgs(path):
-    #删除该路径下所有尺寸不是DEFAULT_RESOLUTION的图片
+def del_unfit_imgs(path,mode='strict'):
+    #'strict'模式下删除该路径下所有尺寸不是DEFAULT_RESOLUTION的图片，非stric模式下删除长宽均小于默认尺寸的图片（momentum有很多不满足我原来设想的标准尺寸要求的美图啊~~~）
     for filename in os.listdir(path):
         all_filename = os.path.join(path,filename)
         if os.path.isfile(all_filename):
@@ -92,10 +95,15 @@ def del_unfit_imgs(path):
                 os.remove(all_filename)
                 continue
             imgSize = get_img_resolution(all_filename)
-            if max(imgSize) != max(DEFAULT_RESOLUTION) and min(imgSize) != min(DEFAULT_RESOLUTION):
-                os.remove(all_filename)
+            if mode == 'strict':
+                if max(imgSize) != max(DEFAULT_RESOLUTION) and min(imgSize) != min(DEFAULT_RESOLUTION):
+                    os.remove(all_filename)
+            else:
+                if max(imgSize) < max(DEFAULT_RESOLUTION) and min(imgSize) < min(DEFAULT_RESOLUTION):
+                    os.remove(all_filename)
 
 if __name__ == '__main__':
     copyfiles(DIR, PIC_DIR)
+    copyfiles(MOMENTUM_DIR,PIC_DIR)
     rename(PIC_DIR)
-    del_unfit_imgs(PIC_DIR)
+    del_unfit_imgs(PIC_DIR,mode='non_strict')

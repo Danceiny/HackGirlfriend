@@ -5,6 +5,7 @@ sys.setdefaultencoding('utf-8')
 import os
 from ConfigParser import ConfigParser
 from flask_celery import Celery
+
 celery = Celery()
 
 def make_celery(app):
@@ -21,6 +22,7 @@ def make_celery(app):
     return celery
 
 def configure_celery(app):
+
     conf = ConfigParser()
     conf_name = os.path.join('PackageData', 'celery.conf')
     conf_path = os.path.dirname(os.path.dirname(__file__))
@@ -33,3 +35,4 @@ def configure_celery(app):
         CELERY_BROKER_URL=conf.get('DEFAULT','CELERY_BROKER_URL'),
         CELERY_RESULT_BACKEND=conf.get('DEFAULT','CELERY_RESULT_BACKEND')
         )
+    celery.init_app(app)

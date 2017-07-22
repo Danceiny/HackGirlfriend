@@ -64,11 +64,18 @@ urlmap的索引（细节不赘述）。一般与url相同。
 
 - 有公用资源`~/Applications/static/js/lazysizes.min.js`，私有资源`~/Applications/QQBot/static/templates/QRCode.html`以及`~/Applications/QQBot/static/images/*.png`。
 
+创建APP时，
+```python
+template_folder = 'static/templates'
+static_folder = 'static'
+if not 'Applications' in os.getcwd():
+    template_folder = '/'.join(('Applications',template_folder))
+    static_folder = '/'.join(('Applications',static_folder))
+```
 在`BLUEPRINT_NAME=QQBot`情况下，在`~/Applications/QQBot/QQBot.py`中声明blueprint对象`QQBot`,并通过route装饰器，定义路由`qqbot/one`的视图函数`oneclickstart`。在该函数中：
 
 1. 设置`lazy_js_path = url_for('static',filename='js/lazysizes.min.js')`,构造得到`/static/js/lazysizes.min.js`;设置`static_img = url_for('QQBot.static',filename='images/'+'*.png')`构造得到`static_img = /qqbot/static/images/*.png`。
 
-`。
 2. 将lazy_js_path放入模板中：`render_template('QRCode.html',lazy_js_path=lazy_js_path,static_img=static_img)`。其中QRCode.html中通过`<script>`,`<img>`标签引入`{{ lazy_js_path }}`,`{{ static_img }}`。
     
 3. 浏览器访问`ip:port/qqbot/one`,检查元素可知，js文件的实际GET路径为`http://ip:port/static/js/lazysizes.min.js`,png图片的实际GET路径为`http://ip:port/qqbot/static/images/*.png`。
