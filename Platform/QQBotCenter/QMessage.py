@@ -36,7 +36,6 @@ class QMessage(threading.Thread):
         self.HttpClient_Ist = HttpClient_Ist
         self.MyUIN = LoginDelegate.MyUIN
 
-
         self.ThreadList = []
         self.GroupThreadList = []
         self.GroupWatchList = []    #str(guin)
