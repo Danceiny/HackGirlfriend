@@ -95,7 +95,10 @@ wsgi应用来说，工厂模式是非常必要的：一般要求celery先启动�
 - web-server入口 `~/Applications/wsgi.py` 
 - celery工厂 `~/Libraries/Celery.py` 
 - tasks
-`~/Platform/CeleryCenter/*.py`
+`~/Platform/*Center/*.py @celery.task()`
+
+# 监控 by flower
+https://github.com/mher/flower/
 
 # Refs
 - [在 Flask 项目中使用 Celery](http://liyangliang.me/posts/2015/11/using-celery-with-flask/)

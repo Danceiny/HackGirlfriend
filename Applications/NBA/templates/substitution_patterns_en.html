@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>NBA SubstitutionPatterns</title>
+		<link rel="icon" type="image/png" href="{{ url_for('NBA.static',filename="images/icon.png") }}">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
+		<style>
+			hr {
+				margin-top:0px;
+				margin-bottom:2px;
+			}
+			rect.bordered {
+				stroke: #E6E6E6;
+				stroke-width:1px;
+			}
+
+			text {
+				font-size: 9pt;
+			}
+
+			h2 {
+				font-family: 'Roboto', san-serif;
+				margin-top:10px;
+			}
+			p {
+				font-family: 'Roboto', san-serif;
+				font-size: 10pt;
+				margin-bottom:0px;
+				margin-top:5px;
+				margin-left: 145px;
+				margin-right:90px;
+			}
+
+			.title {
+				margin-left:145px;
+				margin-right:145px;
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.controls {
+				margin-left: 145px;
+				display:flex;
+				align-items:center;
+			}
+			.legend {
+				margin-left:50px;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+		<script src="{{ url_for("NBA.static",filename="js/substitution_patterns.js") }}"></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="title">
+				<h2>NBA Substitution Patterns</h2>
+				<h2><small>by <a href="https://github.com/alexwainger">alex wainger</a></small></h2>
+			</div>
+			<hr>
+			<div>
+				<p class="description">Each row represents a different player, while each column represents a particular minute. The color of each cell indicates the percentage of games that the player played that minute. The percentages are out of 82 games, not the number of games the player played, so 2014-15 Kevin Durant has a 30-40% color for the first minute, even though he started all 27 games that he played in, since he missed 55 games with an injury.</p>
+				<p><i>Last Data Update: <span id="lastDataUpdate"></span></i></p>
+			</div>
+			<div class="controls">
+				<select id="team" class="midAlign">
+					<option value="ATL">Atlanta Hawks 亚特兰大老鹰队</option>
+					<option value="BOS">Boston Celtics 波士顿凯尔特人队</option>
+					<option value="BRK">Brooklyn Nets 布鲁克林篮网队</option>
+					<option value="CHI">Chicago Bulls 芝加哥公牛队</option>
+					<option value="CHO">Charlotte Hornets 夏洛特山猫队</option>
+					<option value="CLE">Cleveland Cavaliers 克里夫兰骑士队</option>
+					<option value="DAL">Dallas Mavericks 达拉斯小牛队</option>
+					<option value="DEN">Denver Nuggets 丹佛掘进队</option>
+					<option value="DET">Detroit Pistons</option>
+					<option value="GSW">Golden State Warriors</option>
+					<option value="HOU">Houston Rockets</option>
+					<option value="IND">Indiana Pacers</option>
+					<option value="LAC">LA Clippers</option>
+					<option value="LAL">LA Lakers</option>
+					<option value="MEM">Memphis Grizzlies</option>
+					<option value="MIA">Miami Heat</option>
+					<option value="MIL">Milwaukee Bucks</option>
+					<option value="MIN">Minnesota Timberwolves</option>
+					<option value="NOP">New Orleans Pelicans</option>
+					<option value="NYK">New York Knicks</option>
+					<option value="OKC">Oklahoma City Thunder</option>
+					<option value="ORL">Orlando Magic</option>
+					<option value="PHI">Philadelphia 76ers</option>
+					<option value="PHO">Phoenix Suns</option>
+					<option value="POR">Portland Trailblazers</option>
+					<option value="SAC">Sacramento Kings</option>
+					<option value="SAS">San Antonio Spurs</option>
+					<option value="TOR">Toronto Raptors</option>
+					<option value="UTA">Utah Jazz</option>
+					<option value="WAS">Washington Wizards</option>
+				</select>
+				<select id="year" class="midAlign">
+					<option value="2017">2016-2017</option>
+					<option value="2016">2015-2016</option>
+					<option value="2015">2014-2015</option>
+					<option value="2014">2013-2014</option>
+					<option value="2013">2012-2013</option>
+				</select>
+				<svg width="750" height="40" class="legend"></svg>
+			</div>
+			<div id="heatmap"></div>
+		</div>
+	</body>
+</html>

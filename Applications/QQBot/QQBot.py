@@ -29,15 +29,8 @@ from flask import current_app
 @QQBot.route('qqbot/one',methods=['GET'],endpoint='oneclickstart')
 @check_api_cost_time
 @allow_cross_domain
+@package_json_request_data
 def oneclickstart():
-    if request.method == "POST":
-        request.data = json.loads(request.data)
-    else:
-        temp_raw_data = request.args.items()
-        temp_raw_map = {}
-        for temp_item in temp_raw_data:
-            temp_raw_map[temp_item[0]] = temp_item[1]
-        request.data = temp_raw_map
     data = request.data
     groups = []
     if data != None and any(data):
@@ -51,11 +44,13 @@ def oneclickstart():
     kwargs = qqBotCenter.getQRUrlDelegate()
 
     # qqBotCenter.continueLogin(groups,kwargs)
-
-    t = threading.Thread(target=qqBotCenter.loginWithDelegate, args=groups,
-                         kwargs=kwargs)
-    t.setDaemon(True)
-    t.start()  # 不能join，join就堵塞了，无法返回
+    if data.get('use_celery','true') != 'true':
+        t = threading.Thread(target=qqBotCenter.loginWithDelegate, args=groups,
+                             kwargs=kwargs)
+        t.setDaemon(True)
+        t.start()  # 不能join，join就堵塞了，无法返回
+    else:
+        qqBotCenter.loginWithDelegate()
 
     lazy_js_path = url_for('static',filename='js/lazysizes.min.js')
     min_img = url_for('QQBot.static',filename='images/qrcode-min.png')

@@ -4,7 +4,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 from CONFIGS import *
-
+from Libraries.Celery import celery
 from Libraries.Singleton.Singleton import Singleton
 from HttpClient import HttpClient
 from Libraries.mythreadpool import WorkerManager,Worker
@@ -64,8 +64,7 @@ class QQBotCenter(object):
         try:
             cur_file_path = __file__
             abs_vpath = concat_dirs(True, cur_file_path, '..','..',
-                                    '..','Applications','QQBot', ' \
-                                                                     ''static',
+                                    '..','Applications','QQBot','static',
                                     'images', '{}.png'.format(
                     get_now_time_str_ms().replace('.', '')))
             loginParams = {'DELETE_PIC': True,
@@ -83,6 +82,7 @@ class QQBotCenter(object):
                                                          'QQBot','static','images'))
             os._exit(-1)
 
+    @celery.task()
     def loginWithDelegate(self,*args, **kwargs):
         qqLoginDelegate = None
         HttpClient_Ist = None
@@ -117,26 +117,5 @@ class QQBotCenter(object):
             except Exception, e:
                 logger.error("读取组存档出错:" + str(e))
             qMsg_Ist.join()
-        # 多进程： windows上开不起来？？？
-        # p = multiprocessing.Process(target=qqBotCenter.continueLogin, args=(groups,kwargs))
-        # p.start()
-        # p.join()
-
-        # kwargs = None
-        # pool = multiprocessing.Pool()
-        # result = Queue.Queue()
-        #
-        # '''
-        # 将子进程对象存入队列中。
-        # '''
-        # q.put(pool.apply_async(qqBotCenter.getQRUrlDelegate, args=()))  # 维持执行的进程总数为10，当一个进程执行完后添加新进程.
-        # '''
-        # 因为这里使用的为pool.apply_async异步方法，因此子进程执行的过程中，父进程会执行while，获取返回值并校验。
-        # '''
-        # while True:
-        #     kwargs = result.get().get()
-        #     if kwargs:
-        #         pool.terminate()  # 结束进程池中的所有子进程。
-        #         break
         else:
             return {'msg':'delegate is None!'}

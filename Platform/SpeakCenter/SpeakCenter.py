@@ -6,7 +6,9 @@ import trace
 # from PackageNormalData import *
 from flask import Blueprint, request, jsonify, redirect, render_template
 
-import pylab
+import platform
+if 'win' in platform.platform().lower():
+    import pylab
 from scipy.io import wavfile
 import Libraries.ErrorDefine as ED
 

@@ -14,7 +14,7 @@ from Admin.Admin import Admin
 from Secret.Secret import Secret
 from Zuiwan.User import ZuiwanUser
 from Zuiwan.Wechat import ZuiwanWechat
-
+from NBA.NBA import NBA
 from Libraries.Celery import configure_celery
 
 def configure_blueprints(app):
@@ -30,6 +30,7 @@ def configure_blueprints(app):
     # zuiwan
     app.register_blueprint(ZuiwanWechat, url_prefix="/")
     app.register_blueprint(ZuiwanUser, url_prefix="/")
+    app.register_blueprint(NBA, url_prefix="/")
 
 
 

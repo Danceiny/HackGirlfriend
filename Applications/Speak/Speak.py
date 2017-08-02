@@ -13,8 +13,8 @@ from Platform.SpeakCenter.SpeakCenter import SpeakCenter
 
 # 实例化一个blueprint
 Speak = Blueprint("Speak", __name__)
-chatbotCenter = ChatbotCenter()
-speakCenter = SpeakCenter()
+chatbotCenter = ChatbotCenter.instance()
+speakCenter = SpeakCenter.instance()
 
 @check_api_cost_time
 @allow_cross_domain

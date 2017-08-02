@@ -32,7 +32,7 @@ import imghdr  # determine img type
 
 ######################  自定义常量   ####################
 USERNAME = 'huangzhen'
-MOMENTUM_VER = '0.95.3_0'   # chrome 插件 momontum的版本号,可根据下面代码中的MOMENTUM_DIR进入文件管理器中查找
+MOMENTUM_VER = '0.96.3_0'   # chrome 插件 momontum的版本号,可根据下面代码中的MOMENTUM_DIR进入文件管理器中查找
 PIC_DIR = r''
 DEFAULT_RESOLUTION = (1920,1080)
 ######################  自定义常量   ####################

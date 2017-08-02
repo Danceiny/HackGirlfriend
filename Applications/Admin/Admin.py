@@ -15,9 +15,9 @@ Admin = Blueprint("Admin", __name__,template_folder='templates',static_folder='s
 
 @Admin.route('/',methods=['GET'],endpoint='admin_hello_world')
 def hello_world():
-    return redirect('index')
+    return redirect('help')
 
-@Admin.route('index',methods=['GET'],endpoint='admin_index')
+@Admin.route('help',methods=['GET'],endpoint='admin_help')
 @check_api_cost_time
 @allow_cross_domain
 def index():

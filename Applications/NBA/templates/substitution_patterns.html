@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>NBA 各球队换人模式分析</title>
+		<link rel="icon" type="image/png" href="{{ url_for('NBA.static',filename="images/icon.png") }}">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
+		<style>
+			hr {
+				margin-top:0px;
+				margin-bottom:2px;
+			}
+			rect.bordered {
+				stroke: #E6E6E6;
+				stroke-width:1px;
+			}
+
+			text {
+				font-size: 9pt;
+			}
+
+			h2 {
+				font-family: 'Roboto', san-serif;
+				margin-top:10px;
+			}
+			p {
+				font-family: 'Roboto', san-serif;
+				font-size: 10pt;
+				margin-bottom:0px;
+				margin-top:5px;
+				margin-left: 145px;
+				margin-right:90px;
+			}
+
+			.title {
+				margin-left:145px;
+				margin-right:145px;
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.controls {
+				margin-left: 145px;
+				display:flex;
+				align-items:center;
+			}
+			.legend {
+				margin-left:50px;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+		<script src="{{ url_for("NBA.static",filename="js/substitution_patterns.js") }}"></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="title">
+				<h2>NBA 各球队换人模式分析</h2>
+                <h3><button onclick="location.href='?update=1';">更新</button></h3>
+				<h2><small>基于<a href="https://github.com/alexwainger/NBASubstitutionPatterns">NBASubstitutionPatterns</a>的二次开发</small></h2>
+			</div>
+			<hr>
+			<div>
+				<p class="description">每一行代表一名球员，而每一列代表特定的某一分钟。每一个单元格的颜色表示玩家在那一分钟上场比赛的百分比。百分比的分母是整个常规赛的82场比赛，而不是球员上场的场次数，所以2014-15年凯文杜兰特在第一分钟有30-40%的颜色，尽管他打了赛季开始的所有27场比赛，但是因为受伤他错过了55场比赛。</p>
+				<p><i>最近数据更新: <span id="lastDataUpdate"></span></i></p>
+			</div>
+			<div class="controls">
+				<select id="team" class="midAlign">
+					<option value="ATL">亚特兰大老鹰队</option>
+					<option value="BOS">波士顿凯尔特人队</option>
+					<option value="BRK">布鲁克林篮网队</option>
+					<option value="CHI">芝加哥公牛队</option>
+					<option value="CHO">夏洛特山猫队</option>
+					<option value="CLE">克里夫兰骑士队</option>
+					<option value="DAL">达拉斯小牛队</option>
+					<option value="DEN">丹佛掘金队</option>
+					<option value="DET">底特律活塞队</option>
+					<option value="GSW">金州勇士队</option>
+					<option value="HOU">休斯顿火箭队</option>
+					<option value="IND">印第安纳步行者队</option>
+					<option value="LAC">洛杉矶湖人队</option>
+					<option value="LAL">洛杉矶快船队</option>
+					<option value="MEM">孟菲斯灰熊队</option>
+					<option value="MIA">迈阿密热火队</option>
+					<option value="MIL">密尔沃基雄鹿队</option>
+					<option value="MIN">明尼苏达森林狼队</option>
+					<option value="NOP">新奥尔良鹈鹕队</option>
+					<option value="NYK">纽约尼克斯队</option>
+					<option value="OKC">俄克拉荷马雷霆队</option>
+					<option value="ORL">奥兰多魔术队</option>
+					<option value="PHI">费城76人队</option>
+					<option value="PHO">菲尼克斯太阳队</option>
+					<option value="POR">波特兰开拓者队</option>
+					<option value="SAC">萨克拉门托国王队</option>
+					<option value="SAS">圣安东尼奥马刺队</option>
+					<option value="TOR">多伦多猛龙队</option>
+					<option value="UTA">犹他爵士队</option>
+					<option value="WAS">华盛顿奇才队</option>
+				</select>
+				<select id="year" class="midAlign">
+					<option value="2017">2016-2017</option>
+					<option value="2016">2015-2016</option>
+					<option value="2015">2014-2015</option>
+					<option value="2014">2013-2014</option>
+					<option value="2013">2012-2013</option>
+				</select>
+				<svg width="750" height="40" class="legend"></svg>
+			</div>
+			<div id="heatmap"></div>
+		</div>
+	</body>
+</html>

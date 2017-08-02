@@ -7,13 +7,11 @@
  [![](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/ResolveWang)
 
-**本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**
-
-[文档请参见](https://cannot.cc/HackGirlfriend)。
+**本项目是以flask为基础的后台项目，注重可扩展性，以学习为目的。**[项目文档](https://cannot.cc/HackGirlfriend)。
 
 ## [Deploy](https://cannot.cc/HackGirlfriend/DeployWebServer)
 
-## [ToDo]((https://cannot.cc/HackGirlfriend/TodoList))
+## [ToDo](https://cannot.cc/HackGirlfriend/TodoList)
 
 ## 姊妹项目
 
@@ -40,7 +38,7 @@ All rights reserved.
 Applications转发到此（有一个对应关系）。
 
 ### docs
-项目中用到的技术，学习中可以留下**简要**的文档，并不断规范化。master分支下的该文件夹是GitHub Pages的目录，访问[HackGirlfriend Pages](https://cannot.cc/HackGirlfriend).
+项目中用到的技术，学习中可以留下规范化的**简要**的文档。master分支下的该文件夹是GitHub Pages的目录，访问[HackGirlfriend Pages](https://cannot.cc/HackGirlfriend).
 
 ### Libraries
 项目中用到的库（第三方或者自建）。
@@ -53,6 +51,9 @@ Applications转发到此（有一个对应关系）。
 
 ### Temp
 临时代码。
+
+### tools
+测试脚本、自动化部署脚本等工具。
 
 ## 协作者
 - 
